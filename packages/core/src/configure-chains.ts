@@ -35,13 +35,13 @@ export function configureChains<TChain extends Chain = Chain>(
     return activeChain;
   };
 
-  const createRpcClient = ({ name }: Pick<Chain, 'name'>) => {
+  const rpcClient = ({ name }: { name: string }) => {
     const activeChain = getActiveChain(name);
     const rpcNodeUrl = rpcUrls[activeChain!.name]!.node;
     return new RPC(rpcNodeUrl);
   };
 
-  const createIndexer = ({ name }: Pick<Chain, 'name'>) => {
+  const indexer = ({ name }: { name: string }) => {
     const activeChain = getActiveChain(name);
     const indexerUrl = rpcUrls[activeChain!.name]!.indexer;
     return new Indexer(indexerUrl);
@@ -49,7 +49,7 @@ export function configureChains<TChain extends Chain = Chain>(
 
   return {
     chains,
-    createRpcClient,
-    createIndexer,
+    rpcClient,
+    indexer,
   };
 }

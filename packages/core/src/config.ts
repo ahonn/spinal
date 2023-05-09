@@ -7,11 +7,11 @@ export type CreateConfigParameters<
 > = {
   autoConnect?: boolean;
   connectors?: (() => Connector[]) | Connector[];
-  rpcClient: ((config: { name?: string }) => TRpcClient) | TRpcClient;
-  indexer?: ((config: { name?: string }) => TIndexer | undefined) | TIndexer;
+  rpcClient: ((config: { name: string }) => TRpcClient) | TRpcClient;
+  indexer?: ((config: { name: string }) => TIndexer | undefined) | TIndexer;
 };
 
-class Config {
+export class Config {
   public rpcClient: CreateConfigParameters['rpcClient'];
   public indexer: CreateConfigParameters['indexer'];
 

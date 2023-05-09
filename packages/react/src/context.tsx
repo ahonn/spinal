@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react';
 import type { PropsWithChildren } from 'react';
-import type { CreateConfigParameters } from '@spinal/core';
+import { CreateConfigParameters, createConfig } from '@spinal/core';
+import { Config } from '@spinal/core';
 
 export const SpinalConfigContext = createContext<
-  CreateConfigParameters | undefined
+  Config | undefined
 >(undefined);
 
 export interface SpinalConfigProviderProps extends PropsWithChildren {
@@ -13,7 +14,7 @@ export interface SpinalConfigProviderProps extends PropsWithChildren {
 export function SpinalConfigProvider(props: SpinalConfigProviderProps) {
   const { children, config } = props;
   return (
-    <SpinalConfigContext.Provider value={config}>
+    <SpinalConfigContext.Provider value={createConfig(config)}>
       {children}
     </SpinalConfigContext.Provider>
   );

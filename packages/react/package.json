@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "DEV=true tsup"
+    "dev": "DEV=true tsup --watch"
   },
   "peerDependencies": {
     "react": ">=17.0.0",
@@ -29,6 +29,6 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "@spinal/core": "workspace:*"
+    "@spinal/core": "file:../core"
   }
 }
