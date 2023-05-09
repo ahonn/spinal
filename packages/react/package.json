@@ -1,0 +1,34 @@
+{
+  "name": "@spinal/react",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [],
+  "author": "Yuexun Jiang <yuexunjiang@gamil.com>",
+  "license": "MIT",
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "splitting": true,
+    "sourcemap": true,
+    "clean": true,
+    "dts": true
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "DEV=true tsup"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "typescript": ">=4.9.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.6",
+    "react": "^18.2.0"
+  },
+  "dependencies": {
+    "@spinal/core": "workspace:*"
+  }
+}
