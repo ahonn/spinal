@@ -1,3 +1,8 @@
+export interface ConnecterData {
+  address: string;
+}
+
 export abstract class Connector {
-  abstract connect(): void;
+  abstract id: string;
+  abstract connect(): Promise<ConnecterData>;
 }

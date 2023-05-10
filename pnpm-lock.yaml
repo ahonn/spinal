@@ -50,6 +50,9 @@ importers:
       '@ckb-lumos/lumos':
         specifier: ^0.19.0
         version: 0.19.0(cross-fetch@3.1.5)(jsbi@4.3.0)
+      jotai:
+        specifier: ^2.1.0
+        version: 2.1.0
 
   packages/react:
     dependencies:
@@ -2488,6 +2491,16 @@ packages:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
     dev: true
+
+  /jotai@2.1.0:
+    resolution: {integrity: sha512-fR82PtHAmEQrc/daMEYGc4EteW96/b6wodtDSCzLvoJA/6y4YG70er4hh2f8CYwYjqwQ0eZUModGfG4DmwkTyQ==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dev: false
 
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
