@@ -1,14 +1,34 @@
 import { getConfig } from 'src/config';
 import type { Connector } from 'src/connectors/base';
+import { connectAtom } from 'src/store/connect';
 
 export interface ConnectArgs {
   connector: Connector;
 }
 
-export function connect({ connector }: ConnectArgs) {
+export async function connect({ connector }: ConnectArgs) {
   const config = getConfig();
+  const connectState = config.store.get(connectAtom);
+
   const activeConnector = config.connector;
-  if (connector!.id === activeConnector?.id) {
+  const isConnected = connectState.status === 'connected';
+
+  if (connector!.id === activeConnector?.id && isConnected) {
     throw new Error('// TODO: AlreadyConnectedError');
   }
+
+  config.store.set(connectAtom, {
+    status: 'connecting',
+  });
+  const data = await connector.connect();
+  config.store.set(connectAtom, {
+    connector,
+    data,
+    status: 'connected',
+  });
+
+  return {
+    connector,
+    data,
+  };
 }

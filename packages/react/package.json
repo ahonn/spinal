@@ -11,7 +11,7 @@
     "entry": [
       "src/index.ts"
     ],
-    "splitting": true,
+    "splitting": false,
     "sourcemap": true,
     "clean": true,
     "dts": true
@@ -29,6 +29,8 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "@spinal/core": "file:../core"
+    "@spinal/core": "file:../core",
+    "@tanstack/query-core": "^4.29.5",
+    "jotai-tanstack-query": "^0.7.0"
   }
 }

@@ -1,11 +1,10 @@
 import { createContext, useContext } from 'react';
 import type { PropsWithChildren } from 'react';
-import { CreateConfigParameters, createConfig } from '@spinal/core';
-import { Config } from '@spinal/core';
+import type { Config, CreateConfigParameters } from '@spinal/core';
+import { Provider as JotaiProvider } from 'jotai';
+import { createConfig } from '@spinal/core';
 
-export const SpinalConfigContext = createContext<
-  Config | undefined
->(undefined);
+export const SpinalConfigContext = createContext<Config | undefined>(undefined);
 
 export interface SpinalConfigProviderProps extends PropsWithChildren {
   config: CreateConfigParameters;
@@ -14,9 +13,11 @@ export interface SpinalConfigProviderProps extends PropsWithChildren {
 export function SpinalConfigProvider(props: SpinalConfigProviderProps) {
   const { children, config } = props;
   return (
-    <SpinalConfigContext.Provider value={createConfig(config)}>
-      {children}
-    </SpinalConfigContext.Provider>
+    <JotaiProvider>
+      <SpinalConfigContext.Provider value={createConfig(config)}>
+        {children}
+      </SpinalConfigContext.Provider>
+    </JotaiProvider>
   );
 }
 
