@@ -12,10 +12,8 @@ interface UseConnectArgs {
 const [, connectMutationAtom] = atomsWithMutation(() => ({
   mutationKey: ['connect'],
   mutationFn: async ({ connector }: UseConnectArgs) => {
-    const {
-      data: { address },
-    } = await connect({ connector });
-    return address;
+    const response = await connect({ connector });
+    return response?.data.address;
   },
 }));
 

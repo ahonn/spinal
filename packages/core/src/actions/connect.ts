@@ -14,7 +14,7 @@ export async function connect({ connector }: ConnectArgs) {
   const isConnected = connectState.status === 'connected';
 
   if (connector!.id === activeConnector?.id && isConnected) {
-    throw new Error('// TODO: AlreadyConnectedError');
+    return;
   }
 
   config.store.set(connectAtom, {

@@ -7,7 +7,7 @@
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r --parallel run build",
     "lint": "eslint . --cache",
-    "prepublish": "pnpm run build"
+    "publish": "pnpm run build && pnpm publish --access=public -r"
   },
   "keywords": [],
   "author": "Yuexun Jiang <yuexunjiang@gmail.com>",
