@@ -8,6 +8,7 @@ export interface RpcUrl {
 
 export type Chain = config.Config & {
   name: string;
+  network: string;
   rpcUrls: {
     public: RpcUrl;
   };
@@ -15,7 +16,8 @@ export type Chain = config.Config & {
 
 export const mainnet: Chain = {
   ...config.predefined.LINA,
-  name: 'lina',
+  name: 'mirana',
+  network: 'ckb',
   rpcUrls: {
     public: {
       node: 'mainnet.ckbapp.dev',
@@ -27,7 +29,8 @@ export const mainnet: Chain = {
 
 export const testnet: Chain = {
   ...config.predefined.AGGRON4,
-  name: 'aggron4',
+  name: 'pudge',
+  network: 'ckb_testnet',
   rpcUrls: {
     public: {
       node: 'testnet.ckbapp.dev',

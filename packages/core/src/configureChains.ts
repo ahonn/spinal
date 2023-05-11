@@ -2,10 +2,7 @@ import { Indexer, RPC } from '@ckb-lumos/lumos';
 import type { Chain, RpcUrl } from './chains';
 import type { ChainProvider } from './providers/type';
 
-export function configureChains<TChain extends Chain = Chain>(
-  defaultChains: TChain[],
-  providers: ChainProvider[],
-) {
+export function configureChains<TChain extends Chain = Chain>(defaultChains: TChain[], providers: ChainProvider[]) {
   const chains: TChain[] = [];
   const rpcUrls: Record<string, RpcUrl> = {};
 
@@ -26,8 +23,7 @@ export function configureChains<TChain extends Chain = Chain>(
   }
 
   const getActiveChain = (name: string) => {
-    const activeChain =
-      chains.find((chain) => chain.name === name) ?? defaultChains[0];
+    const activeChain = chains.find((chain) => chain.name === name) ?? defaultChains[0];
     if (!activeChain) {
       // TOEO: throw error
       return;

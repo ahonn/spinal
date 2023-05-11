@@ -1,4 +1,4 @@
-export { configureChains } from './configure-chains';
+export { configureChains } from './configureChains';
 export * as chains from './chains';
 export * from './config';
 export * from './store';

@@ -1,8 +1,10 @@
+import { Chain, mainnet, testnet } from 'src/chains';
 import type { ConnecterData } from './base';
 import { Connector } from './base';
-import { helpers } from '@ckb-lumos/lumos';
+import { BI, Cell, helpers } from '@ckb-lumos/lumos';
 
 type MethodNames =
+  | 'ckb_getBlockchainInfo'
   | 'wallet_enable'
   | 'wallet_fullOwnership_getLiveCells'
   | 'wallet_fullOwnership_getOffChainLocks'
@@ -20,6 +22,12 @@ declare global {
 
 export class NexusConnentor extends Connector {
   public id = 'nexus';
+  public chains: Chain[];
+
+  constructor(args?: { chains: Chain[] }) {
+    super();
+    this.chains = args?.chains ?? [mainnet, testnet];
+  }
 
   private getProvider(): Window['ckb'] | null {
     if (typeof window === 'undefined') {
@@ -32,19 +40,49 @@ export class NexusConnentor extends Connector {
     return ckb;
   }
 
+  private async getLiveCells(): Promise<Cell[]> {
+    const liveCells: Cell[] = [];
+    const provider = this.getProvider();
+    if (!provider) {
+      return liveCells;
+    }
+
+    let response = await provider.request({ method: 'wallet_fullOwnership_getLiveCells', params: {} });
+    liveCells.push(...response.objects);
+    while (response.cursor) {
+      response = await provider.request({
+        method: 'wallet_fullOwnership_getLiveCells',
+        params: { cursor: response.cursor },
+      });
+      liveCells.push(...response.objects);
+    }
+
+    return liveCells.filter(
+      (item: Cell) =>
+        item.cellOutput.type === undefined &&
+        item.data === '0x' &&
+        // secp256k1 code hash, refer to:
+        // https://github.com/nervosnetwork/rfcs/blob/5ccfef8a5e51c6f13179452d3589f247eae55554/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md#secp256k1blake160
+        item.cellOutput.lock.codeHash === '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8' &&
+        item.cellOutput.lock.hashType === 'type',
+    );
+  }
+
   public async connect(): Promise<ConnecterData> {
     const provider = this.getProvider();
     if (!provider) {
-      throw new Error('// TODO: throw error');
+      throw new Error('Nexus Wallet not found');
     }
     await provider!.request({ method: 'wallet_enable' });
+    const info = await provider!.request({ method: 'ckb_getBlockchainInfo' });
+    const chain = this.chains.find((chain) => chain.network === info.chain);
 
     const offChainLocks = await provider!.request({
       method: 'wallet_fullOwnership_getOffChainLocks',
       params: { change: 'external' },
     });
     const [lock] = offChainLocks;
-    const address = helpers.encodeToAddress(lock);
+    const address = helpers.encodeToAddress(lock, { config: chain });
     return {
       address,
     };
@@ -52,5 +90,19 @@ export class NexusConnentor extends Connector {
 
   async disconnect(): Promise<void> {
     return;
+  }
+
+  async getCapacities(): Promise<BI> {
+    let capacities = BI.from(0);
+    const provider = this.getProvider();
+    if (!provider) {
+      return capacities;
+    }
+    const liveCells = await this.getLiveCells();
+    liveCells.forEach((cell) => {
+      capacities = capacities.add(cell.cellOutput.capacity);
+    });
+
+    return capacities;
   }
 }
