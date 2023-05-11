@@ -49,4 +49,8 @@ export class NexusConnentor extends Connector {
       address,
     };
   }
+
+  async disconnect(): Promise<void> {
+    return;
+  }
 }

@@ -10,12 +10,15 @@ export interface ConnectState {
   status: ConnectStatus;
 }
 
-const connectPayloadAtom = atomWithStorage<
-  Pick<ConnectState, 'data' | 'connector'>
->('connect', {
+const DEFAULT_CONNECT_PAYLOAD = {
   data: undefined,
   connector: undefined,
-});
+};
+
+const connectPayloadAtom = atomWithStorage<Pick<ConnectState, 'data' | 'connector'>>(
+  'connect',
+  DEFAULT_CONNECT_PAYLOAD,
+);
 
 const connectStatusAtom = atom<ConnectStatus>('disconnect');
 
@@ -29,7 +32,13 @@ export const connectAtom = atom(
       status,
     };
   },
-  (_, set, update: Partial<ConnectState>) => {
+  (_, set, update: Partial<ConnectState> | undefined) => {
+    if (update === undefined) {
+      set(connectPayloadAtom, DEFAULT_CONNECT_PAYLOAD);
+      set(connectStatusAtom, 'disconnect');
+      return;
+    }
+
     if (update.data !== undefined && update.connector !== undefined) {
       set(connectPayloadAtom, {
         data: update.data,

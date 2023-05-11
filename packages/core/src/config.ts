@@ -4,31 +4,27 @@ import type { Connector } from './connectors/base';
 import type { ConnectState } from './store/connect';
 import { connect } from './actions/connect';
 import { connectAtom } from './store/connect';
-import { NexusConnentor } from './connectors/nexus';
 
-export type CreateConfigParameters<
-  TRpcClient extends RPC = RPC,
-  TIndexer extends Indexer = Indexer,
-> = {
+export type CreateConfigParameters<TRpcClient extends RPC = RPC, TIndexer extends Indexer = Indexer> = {
   autoConnect?: boolean;
   connectors?: Connector[];
   rpcClient: ((config: { name: string }) => TRpcClient) | TRpcClient;
   indexer?: ((config: { name: string }) => TIndexer | undefined) | TIndexer;
 };
 
-export const DEFAULT_CONNECTORS = [new NexusConnentor()];
-
 export class Config {
+  private params: CreateConfigParameters;
   public rpcClient: CreateConfigParameters['rpcClient'];
   public indexer: CreateConfigParameters['indexer'];
   public store: ReturnType<typeof getDefaultStore>;
   public connectors: Connector[];
 
   constructor(params: CreateConfigParameters) {
+    this.params = params;
     this.rpcClient = params.rpcClient;
     this.indexer = params.indexer;
 
-    this.connectors = params.connectors || DEFAULT_CONNECTORS;
+    this.connectors = params.connectors || [];
 
     this.store = getDefaultStore();
 
@@ -45,10 +41,18 @@ export class Config {
 
   public get connector(): Connector | undefined {
     const connectState = this.store.get(connectAtom);
-    const connector = this.connectors.find(
-      (connector) => connector.id === connectState.connector?.id,
-    );
+    const connector = this.connectors.find((connector) => connector.id === connectState.connector?.id);
     return connector;
+  }
+
+  public addConnector(connector: Connector) {
+    if (this.connectors.some((conn) => conn.id === connector.id)) {
+      return;
+    }
+    this.connectors.push(connector);
+    if (this.params.autoConnect) {
+      this.autoConnect();
+    }
   }
 
   public getConnectState(): ConnectState {

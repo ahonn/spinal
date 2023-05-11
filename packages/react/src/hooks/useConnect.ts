@@ -1,6 +1,6 @@
 import { atomsWithMutation } from 'jotai-tanstack-query';
 import { useAtom } from 'jotai';
-import type { Connector, ConnectState } from '@spinal/core';
+import type { ConnectState, Connector } from '@spinal/core';
 import { connect } from '@spinal/core';
 import { useConfig } from 'src/context';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,6 +32,10 @@ export function useConnect({ connector }: UseConnectArgs) {
       setState(state);
     });
   }, [config]);
+
+  useEffect(() => {
+    config?.addConnector(connector);
+  }, [config, connector]);
 
   const connect = useCallback(() => {
     return mutate([{ connector }]);
