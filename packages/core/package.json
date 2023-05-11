@@ -1,5 +1,5 @@
 {
-  "name": "@spinal/core",
+  "name": "@spinal-ckb/core",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",

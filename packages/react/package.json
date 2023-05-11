@@ -1,5 +1,5 @@
 {
-  "name": "@spinal/react",
+  "name": "@spinal-ckb/react",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
