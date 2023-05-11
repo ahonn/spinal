@@ -1,5 +1,5 @@
 import React from 'react';
-import { useConnect, useDisconnect, NexusConnentor, useCapacities } from '@spinal/react';
+import { useConnect, useDisconnect, NexusConnentor, useCapacities } from '@spinal-ckb/react';
 
 function App() {
   const { address, connected, connect } = useConnect({

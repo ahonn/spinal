@@ -1,5 +1,5 @@
 import { BI } from '@ckb-lumos/lumos';
-import { getCapacities } from '@spinal/core';
+import { getCapacities } from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { atomsWithMutation } from 'jotai-tanstack-query';
 import { useEffect, useMemo } from 'react';

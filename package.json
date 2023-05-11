@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r --parallel run build",
-    "lint": "eslint . --cache"
+    "lint": "eslint . --cache",
+    "prepublish": "pnpm run build"
   },
   "keywords": [],
   "author": "Yuexun Jiang <yuexunjiang@gmail.com>",

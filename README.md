@@ -1,3 +1,3 @@
-# Spinal
+# Spinal CKB
 
-React Hooks for Nervos CKB
+Wagmi-like React Hooks for Nervos CKB

@@ -1,6 +1,6 @@
 import { atomsWithMutation } from 'jotai-tanstack-query';
 import { useAtom } from 'jotai';
-import { disconnect } from '@spinal/core';
+import { disconnect } from '@spinal-ckb/core';
 import { useCallback } from 'react';
 
 const [, disconnectMutationAtom] = atomsWithMutation(() => ({

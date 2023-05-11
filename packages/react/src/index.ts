@@ -1,4 +1,4 @@
-export * from '@spinal/core';
+export * from '@spinal-ckb/core';
 
 export * from './context';
 export * from './hooks/useConnect';
