@@ -8,8 +8,8 @@ import { connectAtom } from './store/connect';
 export type CreateConfigParameters<TRpcClient extends RPC = RPC, TIndexer extends Indexer = Indexer> = {
   autoConnect?: boolean;
   connectors?: Connector[];
-  rpcClient: ((config: { name: string }) => TRpcClient) | TRpcClient;
-  indexer?: ((config: { name: string }) => TIndexer | undefined) | TIndexer;
+  rpcClient: (config: { name: string }) => TRpcClient;
+  indexer: (config: { name: string }) => TIndexer | undefined;
 };
 
 export class Config {

@@ -1,7 +1,9 @@
-import { Chain, mainnet, testnet } from 'src/chains';
+import type { Chain } from 'src/chains';
 import type { ConnecterData } from './base';
+import type { Cell } from '@ckb-lumos/lumos';
+import { mainnet, testnet } from 'src/chains';
 import { Connector } from './base';
-import { BI, Cell, helpers } from '@ckb-lumos/lumos';
+import { BI, helpers } from '@ckb-lumos/lumos';
 
 type MethodNames =
   | 'ckb_getBlockchainInfo'

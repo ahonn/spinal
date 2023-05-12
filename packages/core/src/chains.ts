@@ -3,7 +3,6 @@ import { config } from '@ckb-lumos/lumos';
 export interface RpcUrl {
   node: string;
   indexer: string;
-  mercury: string;
 }
 
 export type Chain = config.Config & {
@@ -20,9 +19,8 @@ export const mainnet: Chain = {
   network: 'ckb',
   rpcUrls: {
     public: {
-      node: 'mainnet.ckbapp.dev',
-      indexer: 'mainnet.ckbapp.dev/indexer',
-      mercury: 'mercury-mainnet.ckbapp.dev',
+      node: 'https://mainnet.ckbapp.dev',
+      indexer: 'https://mainnet.ckbapp.dev/indexer',
     },
   },
 };
@@ -33,9 +31,8 @@ export const testnet: Chain = {
   network: 'ckb_testnet',
   rpcUrls: {
     public: {
-      node: 'testnet.ckbapp.dev',
-      indexer: 'testnet.ckbapp.dev/indexer',
-      mercury: 'mercury-testnet.ckbapp.dev',
+      node: 'https://testnet.ckbapp.dev',
+      indexer: 'https://testnet.ckbapp.dev/indexer',
     },
   },
 };

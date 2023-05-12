@@ -1,9 +1,9 @@
 import React from 'react';
-import { useConnect, useDisconnect, NexusConnentor, useCapacities } from '@spinal-ckb/react';
+import { useConnect, useDisconnect, MetamaskConnector, useCapacities } from '@spinal-ckb/react';
 
 function App() {
   const { address, connected, connect } = useConnect({
-    connector: new NexusConnentor(),
+    connector: new MetamaskConnector(),
   });
   const { disconnect } = useDisconnect();
   const { balance } = useCapacities();
@@ -17,7 +17,7 @@ function App() {
           <button onClick={() => disconnect()}>Disconnect</button>
         </div>
       ) : (
-       <button onClick={() => connect()}>Connect</button>
+        <button onClick={() => connect()}>Connect</button>
       )}
     </div>
   );
