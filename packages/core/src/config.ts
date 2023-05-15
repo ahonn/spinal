@@ -4,7 +4,7 @@ import type { ConnectState } from './store/connect';
 import { connect } from './actions/connect';
 import { connectAtom } from './store/connect';
 import { Chain, testnet } from './chains';
-import { Indexer, RPC } from '@ckb-lumos/lumos';
+import { Indexer, RPC, config as lumosConfig } from '@ckb-lumos/lumos';
 import { chainAtom } from './store/chain';
 
 export type CreateConfigParameters = {
@@ -26,6 +26,17 @@ export class Config {
     this.chains = params.chains;
     this.connectors = params.connectors || [];
     this.store = getDefaultStore();
+
+    const chain = this.store.get(chainAtom) ?? this.chains[0] ?? testnet;
+    if (this.store.get(chainAtom)?.name !== chain.name) {
+      this.store.set(chainAtom, chain);
+    }
+
+    lumosConfig.initializeConfig(this.chain);
+    this.store.sub(chainAtom, () => {
+      const chain = this.store.get(chainAtom);
+      lumosConfig.initializeConfig(chain);
+    });
 
     if (params.autoConnect && typeof window !== undefined) {
       setTimeout(() => this.autoConnect(), 0);
@@ -52,10 +63,7 @@ export class Config {
   }
 
   public get chain(): Chain {
-    const chain = this.store.get(chainAtom) ?? this.chains[0] ?? testnet;
-    if (this.store.get(chainAtom)?.name !== chain.name) {
-      this.store.set(chainAtom, chain);
-    }
+    const chain = this.store.get(chainAtom)!;
     return chain;
   }
 

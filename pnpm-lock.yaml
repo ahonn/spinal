@@ -83,6 +83,12 @@ importers:
       '@ckb-lumos/lumos':
         specifier: ^0.19.0
         version: 0.19.0(cross-fetch@3.1.5)(jsbi@4.3.0)
+      '@nexus-wallet/ownership-providers':
+        specifier: ^0.0.19
+        version: 0.0.19(@ckb-lumos/base@0.19.0)(@ckb-lumos/codec@0.19.0)
+      '@nexus-wallet/protocol':
+        specifier: ^0.0.19
+        version: 0.0.19(@ckb-lumos/base@0.19.0)
       cross-fetch:
         specifier: ^3.1.5
         version: 3.1.5
@@ -2548,6 +2554,35 @@ packages:
 
   /@leichtgewicht/ip-codec@2.0.4:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==, registry: https://registry.yarnpkg.com/}
+    dev: false
+
+  /@nexus-wallet/ownership-providers@0.0.19(@ckb-lumos/base@0.19.0)(@ckb-lumos/codec@0.19.0):
+    resolution: {integrity: sha512-BvQtFik8rjQlntuWTn5LF5Teekg2zgeKPunKyqjQ38SUjXWHoFFNT8MPwM26xAHzexaHLkUV3m1Jv46tBD98zw==}
+    peerDependencies:
+      '@ckb-lumos/base': 0.20.0-alpha.2
+      '@ckb-lumos/bi': 0.20.0-alpha.2
+      '@ckb-lumos/codec': 0.20.0-alpha.2
+      '@ckb-lumos/common-scripts': 0.20.0-alpha.2
+      '@ckb-lumos/config-manager': 0.20.0-alpha.2
+      '@ckb-lumos/helpers': 0.20.0-alpha.2
+    dependencies:
+      '@ckb-lumos/base': 0.19.0(cross-fetch@3.1.5)(jsbi@4.3.0)
+      '@ckb-lumos/codec': 0.19.0
+      '@nexus-wallet/protocol': 0.0.19(@ckb-lumos/base@0.19.0)
+      '@nexus-wallet/utils': 0.0.19
+      lodash.range: 3.2.0
+    dev: false
+
+  /@nexus-wallet/protocol@0.0.19(@ckb-lumos/base@0.19.0):
+    resolution: {integrity: sha512-Kvf5BpdVzbS8oqwDzGvsWaN9uHdwYaVg+SO3Evk5xi8qfXuqMhizb88Vj/XvizKPFnXK2+M0NQ4wZyY0KAzlWQ==}
+    peerDependencies:
+      '@ckb-lumos/base': 0.20.0-alpha.2
+    dependencies:
+      '@ckb-lumos/base': 0.19.0(cross-fetch@3.1.5)(jsbi@4.3.0)
+    dev: false
+
+  /@nexus-wallet/utils@0.0.19:
+    resolution: {integrity: sha512-jYfBSdB6B4VzduWHRlTR8QGD62XAvGKpZk/zol4aHtHASd3pZw5MnloX89EWve8tYHp5261XFtnkbj/6Yibjzg==}
     dev: false
 
   /@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1:
@@ -8141,6 +8176,10 @@ packages:
 
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  /lodash.range@3.2.0:
+    resolution: {integrity: sha512-Fgkb7SinmuzqgIhNhAElo0BL/R1rHCnhwSZf78omqSwvWqD0kD2ssOAutQonDKH/ldS8BxA72ORYI09qAY9CYg==}
+    dev: false
 
   /lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz}

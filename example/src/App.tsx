@@ -1,18 +1,24 @@
 import React from 'react';
-import { useConnect, useDisconnect, MetamaskConnector, useCapacities, useSendTransaction } from '@spinal-ckb/react';
+import {
+  useConnect,
+  useDisconnect,
+  NexusConnector,
+  MetamaskConnector,
+  useCapacities,
+  useSendTransaction,
+} from '@spinal-ckb/react';
 
 function App() {
   const [to, setTo] = React.useState('');
   const [amount, setAmount] = React.useState('');
 
   const { address, connected, connect } = useConnect({
-    connector: new MetamaskConnector(),
+    connector: new NexusConnector(),
+    // connector: new MetamaskConnector(),
   });
   const { disconnect } = useDisconnect();
   const { balance } = useCapacities();
-
-  const shannon = React.useMemo(() => parseFloat(amount) * 10 ** 8, [amount]);
-  const { sendTransaction } = useSendTransaction({ to, amount: shannon });
+  const { sendTransaction } = useSendTransaction({ to, amount });
 
   return (
     <div className="App">

@@ -1,27 +1,26 @@
 import type { ConnecterData } from './base';
-import type { Cell } from '@ckb-lumos/lumos';
+import { BI, Cell, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Connector } from './base';
-import { BI, helpers } from '@ckb-lumos/lumos';
 import { getConfig } from 'src/config';
-
-type MethodNames =
-  | 'ckb_getBlockchainInfo'
-  | 'wallet_enable'
-  | 'wallet_fullOwnership_getLiveCells'
-  | 'wallet_fullOwnership_getOffChainLocks'
-  | 'wallet_fullOwnership_getOnChainLocks'
-  | 'wallet_fullOwnership_signData'
-  | 'wallet_fullOwnership_signTransaction';
+import { bytes } from '@ckb-lumos/codec';
+import { blockchain } from '@ckb-lumos/base';
+import { FullOwnershipProvider } from '@nexus-wallet/ownership-providers';
+import { Events, InjectedCkb, RpcMethods } from '@nexus-wallet/protocol';
+import { getScriptCellDep } from './utils';
 
 declare global {
   interface Window {
-    ckb: {
-      request: (payload: { method: MethodNames; params?: any }) => Promise<any>;
-    };
+    ckb: InjectedCkb<RpcMethods, Events>;
   }
 }
 
-export class NexusConnentor extends Connector {
+export const SECP256K1_BLAKE160_WITNESS_PLACEHOLDER = bytes.hexify(
+  blockchain.WitnessArgs.pack({
+    lock: bytes.hexify(new Uint8Array(65)),
+  }),
+);
+
+export class NexusConnector extends Connector {
   public id = 'nexus';
 
   private getProvider(): Window['ckb'] | null {
@@ -36,8 +35,9 @@ export class NexusConnentor extends Connector {
   }
 
   private async getLiveCells(): Promise<Cell[]> {
-    const liveCells: Cell[] = [];
     const provider = this.getProvider();
+    const config = getConfig();
+    const liveCells: Cell[] = [];
     if (!provider) {
       return liveCells;
     }
@@ -52,14 +52,13 @@ export class NexusConnentor extends Connector {
       liveCells.push(...response.objects);
     }
 
+    const script = config.chain.SCRIPTS['SECP256K1_BLAKE160']!;
     return liveCells.filter(
       (item: Cell) =>
         item.cellOutput.type === undefined &&
         item.data === '0x' &&
-        // secp256k1 code hash, refer to:
-        // https://github.com/nervosnetwork/rfcs/blob/5ccfef8a5e51c6f13179452d3589f247eae55554/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md#secp256k1blake160
-        item.cellOutput.lock.codeHash === '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8' &&
-        item.cellOutput.lock.hashType === 'type',
+        item.cellOutput.lock.codeHash === script.CODE_HASH &&
+        item.cellOutput.lock.hashType === script.HASH_TYPE,
     );
   }
 
@@ -71,23 +70,23 @@ export class NexusConnentor extends Connector {
     await provider!.request({ method: 'wallet_enable' });
     const config = getConfig();
 
-    const offChainLocks = await provider!.request({
+    const externalOffChainLocks = await provider!.request({
       method: 'wallet_fullOwnership_getOffChainLocks',
       params: { change: 'external' },
     });
-    const [lock] = offChainLocks;
-    const address = helpers.encodeToAddress(lock, { config: config.chain });
+    const [lock] = externalOffChainLocks;
+    const address = helpers.encodeToAddress(lock!);
     return {
       address,
       chain: config.chain,
     };
   }
 
-  async disconnect(): Promise<void> {
+  public async disconnect(): Promise<void> {
     return;
   }
 
-  async getCapacities(): Promise<BI> {
+  public async getCapacities(): Promise<BI> {
     let capacities = BI.from(0);
     const provider = this.getProvider();
     if (!provider) {
@@ -101,9 +100,33 @@ export class NexusConnentor extends Connector {
     return capacities;
   }
 
-  async sign(message: string): Promise<string> {
-    // TODO
-    console.log(message);
-    throw new Error('Method not implemented.');
+  public async getLockScript() {
+    const provider = this.getProvider();
+    const internalOffChainLocks = await provider!.request({
+      method: 'wallet_fullOwnership_getOffChainLocks',
+      params: { change: 'internal' },
+    });
+    const [lock] = internalOffChainLocks;
+    return lock!;
+  }
+
+  public async injectCapacity(
+    tx: helpers.TransactionSkeletonType,
+    neededCapacity: BI,
+  ): Promise<helpers.TransactionSkeletonType> {
+    const provider = this.getProvider();
+    const fullOwnershipProvider = new FullOwnershipProvider({ ckb: provider! });
+    tx = await fullOwnershipProvider.injectCapacity(tx, { amount: neededCapacity });
+    return tx;
+  }
+
+  public async signTransaction(tx: helpers.TransactionSkeletonType): Promise<Transaction> {
+    const provider = this.getProvider();
+    const fullOwnershipProvider = new FullOwnershipProvider({ ckb: provider! });
+    // fix fullOwnershipProvider cellDep: 0x71a7ba8fc96349fea0ed3a5c47992e3b4084b031a42264a018e0072e8172e46c
+    tx = tx.update('cellDeps', (cellDeps) => cellDeps.pop().push(getScriptCellDep('SECP256K1_BLAKE160')));
+    tx = await fullOwnershipProvider.signTransaction(tx);
+    const signedTx = helpers.createTransactionFromSkeleton(tx);
+    return signedTx;
   }
 }

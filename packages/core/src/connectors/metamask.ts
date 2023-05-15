@@ -1,10 +1,10 @@
-import type { CellDep } from '@ckb-lumos/lumos';
-import { Transaction, commons, helpers } from '@ckb-lumos/lumos';
+import { BI, CellDep, Transaction, commons, helpers } from '@ckb-lumos/lumos';
 import { ConnecterData, Connector } from './base';
 import { Address, EIP1193Provider, Hex } from 'viem';
 import { getConfig } from 'src/config';
 import { bytes } from '@ckb-lumos/codec';
-import { blockchain } from '@ckb-lumos/base';
+import { Cell, blockchain } from '@ckb-lumos/base';
+import { getScriptCellDep } from './utils';
 
 declare global {
   interface Window {
@@ -15,25 +15,13 @@ declare global {
   }
 }
 
-const SECP_SIGNATURE_PLACEHOLDER = bytes.hexify(
+const OMNILOCK_SIGNATURE_PLACEHOLDER = bytes.hexify(
   new Uint8Array(
     commons.omnilock.OmnilockWitnessLock.pack({
       signature: new Uint8Array(65).buffer,
     }).byteLength,
   ),
 );
-
-function getScriptCellDep(name: string): CellDep {
-  const config = getConfig();
-  const script = config.chain.SCRIPTS[name];
-  return {
-    outPoint: {
-      txHash: script!.TX_HASH,
-      index: script!.INDEX,
-    },
-    depType: script!.DEP_TYPE,
-  };
-}
 
 export class MetamaskConnector extends Connector {
   public id = 'metamask';
@@ -54,13 +42,8 @@ export class MetamaskConnector extends Connector {
     const config = getConfig();
     const accounts = await provider?.request({ method: 'eth_requestAccounts' });
     const ethAddr = accounts![0];
-    const omniLockScript = commons.omnilock.createOmnilockScript(
-      { auth: { flag: 'ETHEREUM', content: ethAddr! } },
-      {
-        config: config.chain,
-      },
-    );
-    const address = helpers.encodeToAddress(omniLockScript, { config: config.chain });
+    const omniLockScript = commons.omnilock.createOmnilockScript({ auth: { flag: 'ETHEREUM', content: ethAddr! } });
+    const address = helpers.encodeToAddress(omniLockScript);
 
     return {
       address,
@@ -68,21 +51,54 @@ export class MetamaskConnector extends Connector {
     };
   }
 
+  public async injectCapacity(
+    tx: helpers.TransactionSkeletonType,
+    neededCapacity: BI,
+  ): Promise<helpers.TransactionSkeletonType> {
+    const config = getConfig();
+    const { address } = this.getState().data!;
+    const fromScript = helpers.parseAddress(address);
+
+    let capacities = BI.from(0);
+    const inputCells: Cell[] = [];
+    const collector = config.indexer.collector({ lock: fromScript, type: 'empty' });
+    for await (const cell of collector.collect()) {
+      capacities = capacities.add(cell.cellOutput.capacity);
+      inputCells.push(cell);
+      if (BI.from(capacities).gte(neededCapacity)) break;
+    }
+
+    if (capacities.lt(neededCapacity)) {
+      throw new Error('Not enough capacity');
+    }
+
+    const changeOutputCell = {
+      cellOutput: {
+        capacity: capacities.sub(neededCapacity).toHexString(),
+        lock: fromScript,
+      },
+      data: '0x',
+    };
+
+    tx = tx.update('inputs', (inputs) => inputs.push(...inputCells));
+    tx = tx.update('outputs', (outputs) => outputs.push(changeOutputCell));
+    return tx;
+  }
+
   public async signTransaction(tx: helpers.TransactionSkeletonType): Promise<Transaction> {
     const provider = this.getProvider();
-    const config = getConfig();
     const inputs = tx.get('inputs');
 
     tx = tx.update('cellDeps', (cellDeps) =>
       cellDeps.push(getScriptCellDep('OMNILOCK'), getScriptCellDep('SECP256K1_BLAKE160')),
     );
 
-    const witness = bytes.hexify(blockchain.WitnessArgs.pack({ lock: SECP_SIGNATURE_PLACEHOLDER }));
+    const witness = bytes.hexify(blockchain.WitnessArgs.pack({ lock: OMNILOCK_SIGNATURE_PLACEHOLDER }));
     inputs.forEach(() => {
       tx = tx.update('witnesses', (witnesses) => witnesses.push(witness));
     });
 
-    tx = commons.omnilock.prepareSigningEntries(tx, { config: config.chain });
+    tx = commons.omnilock.prepareSigningEntries(tx);
     const { message } = tx.signingEntries.get(0)!;
 
     let signature: string = await provider!.request({
