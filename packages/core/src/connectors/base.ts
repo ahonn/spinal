@@ -1,7 +1,9 @@
 import { BI } from '@ckb-lumos/lumos';
+import { Chain } from 'src/chains';
 
 export interface ConnecterData {
   address: string;
+  chain: Chain;
 }
 
 export interface Connector {

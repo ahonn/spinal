@@ -14,10 +14,10 @@ export type CreateConfigParameters = {
 };
 
 export class Config {
+  public static instance: Config;
+
   private params: CreateConfigParameters;
   public chains: Chain[];
-  public rpcClient: RPC;
-  public indexer: Indexer;
   public store: ReturnType<typeof getDefaultStore>;
   public connectors: Connector[];
 
@@ -27,16 +27,16 @@ export class Config {
     this.connectors = params.connectors || [];
     this.store = getDefaultStore();
 
-    this.rpcClient = new RPC(this.chain.rpcUrls.public.node);
-    this.indexer = new Indexer(this.chain.rpcUrls.public.indexer);
-    this.store.sub(chainAtom, () => {
-      this.rpcClient = new RPC(this.chain.rpcUrls.public.node);
-      this.indexer = new Indexer(this.chain.rpcUrls.public.indexer);
-    });
-
     if (params.autoConnect && typeof window !== undefined) {
       setTimeout(() => this.autoConnect(), 0);
     }
+  }
+
+  public static create(params: CreateConfigParameters) {
+    if (!Config.instance) {
+      Config.instance = new Config(params);
+    }
+    return Config.instance;
   }
 
   private autoConnect() {
@@ -59,6 +59,14 @@ export class Config {
     return chain;
   }
 
+  public get rpcClient(): RPC {
+    return new RPC(this.chain.rpcUrls.public.node);
+  }
+
+  public get indexer(): Indexer {
+    return new Indexer(this.chain.rpcUrls.public.indexer);
+  }
+
   public addConnector(connector: Connector) {
     if (this.connectors.some((conn) => conn.id === connector.id)) {
       return;
@@ -79,15 +87,13 @@ export class Config {
       onChange(connectState);
     });
   }
-}
 
-let config: Config;
-
-export function createConfig(params: CreateConfigParameters) {
-  config = new Config(params);
-  return config;
+  public resetStore() {
+    this.store.set(connectAtom, undefined);
+    this.store.set(chainAtom, undefined);
+  }
 }
 
 export function getConfig(): Config {
-  return config;
+  return Config.instance;
 }

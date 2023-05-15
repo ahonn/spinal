@@ -1,7 +1,7 @@
 import { commons, helpers } from '@ckb-lumos/lumos';
 import { ConnecterData, Connector } from './base';
 import { EIP1193Provider } from 'viem';
-import { testnet } from 'src/chains';
+import { getConfig } from 'src/config';
 
 declare global {
   interface Window {
@@ -27,13 +27,15 @@ export class MetamaskConnector extends Connector {
 
   public async connect(): Promise<ConnecterData> {
     const provider = this.getProvider();
+    const config = getConfig();
     const accounts = await provider?.request({ method: 'eth_requestAccounts' });
     const ethAddr = accounts![0];
     const omniLockScript = commons.omnilock.createOmnilockScript({ auth: { flag: 'ETHEREUM', content: ethAddr! } });
-    const address = helpers.encodeToAddress(omniLockScript, { config: testnet });
+    const address = helpers.encodeToAddress(omniLockScript, { config: config.chain });
 
     return {
       address,
+      chain: config.chain,
     };
   }
 

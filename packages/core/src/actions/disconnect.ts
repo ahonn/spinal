@@ -1,5 +1,4 @@
 import { getConfig } from 'src/config';
-import { connectAtom } from 'src/store';
 
 export function disconnect() {
   const config = getConfig();
@@ -7,5 +6,5 @@ export function disconnect() {
     config.connector.disconnect();
   }
 
-  config.store.set(connectAtom, undefined);
+  config.resetStore();
 }

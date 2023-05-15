@@ -1,9 +1,8 @@
-import type { Chain } from 'src/chains';
 import type { ConnecterData } from './base';
 import type { Cell } from '@ckb-lumos/lumos';
-import { mainnet, testnet } from 'src/chains';
 import { Connector } from './base';
 import { BI, helpers } from '@ckb-lumos/lumos';
+import { getConfig } from 'src/config';
 
 type MethodNames =
   | 'ckb_getBlockchainInfo'
@@ -24,12 +23,6 @@ declare global {
 
 export class NexusConnentor extends Connector {
   public id = 'nexus';
-  public chains: Chain[];
-
-  constructor(args?: { chains: Chain[] }) {
-    super();
-    this.chains = args?.chains ?? [mainnet, testnet];
-  }
 
   private getProvider(): Window['ckb'] | null {
     if (typeof window === 'undefined') {
@@ -76,17 +69,17 @@ export class NexusConnentor extends Connector {
       throw new Error('Nexus Wallet not found');
     }
     await provider!.request({ method: 'wallet_enable' });
-    const info = await provider!.request({ method: 'ckb_getBlockchainInfo' });
-    const chain = this.chains.find((chain) => chain.network === info.chain);
+    const config = getConfig();
 
     const offChainLocks = await provider!.request({
       method: 'wallet_fullOwnership_getOffChainLocks',
       params: { change: 'external' },
     });
     const [lock] = offChainLocks;
-    const address = helpers.encodeToAddress(lock, { config: chain });
+    const address = helpers.encodeToAddress(lock, { config: config.chain });
     return {
       address,
+      chain: config.chain,
     };
   }
 
