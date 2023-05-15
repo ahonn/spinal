@@ -100,4 +100,10 @@ export class NexusConnentor extends Connector {
 
     return capacities;
   }
+
+  async sign(message: string): Promise<string> {
+    // TODO
+    console.log(message);
+    throw new Error('Method not implemented.');
+  }
 }

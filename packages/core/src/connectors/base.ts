@@ -1,4 +1,4 @@
-import { BI } from '@ckb-lumos/lumos';
+import { BI, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Chain } from 'src/chains';
 
 export interface ConnecterData {
@@ -13,5 +13,6 @@ export interface Connector {
 export abstract class Connector {
   abstract id: string;
   abstract connect(): Promise<ConnecterData>;
+  abstract signTransaction(tx: helpers.TransactionSkeletonType): Promise<Transaction>;
   abstract disconnect(): Promise<void>;
 }

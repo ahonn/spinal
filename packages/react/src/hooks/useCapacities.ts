@@ -20,7 +20,7 @@ const [, capacitiesMutationAtom] = atomsWithMutation(() => ({
 export function useCapacities() {
   const config = useConfig();
   const [{ data: capacities, error, isError, isLoading, isSuccess }, mutate] = useAtom(capacitiesMutationAtom);
-  const balance = useMemo(() => capacities ? getBalanceByCapacity(capacities) : '0', [capacities]);
+  const balance = useMemo(() => (capacities ? getBalanceByCapacity(capacities) : '0'), [capacities]);
 
   useEffect(() => {
     config?.onConnectChange(() => {

@@ -60,11 +60,11 @@ export class Config {
   }
 
   public get rpcClient(): RPC {
-    return new RPC(this.chain.rpcUrls.public.node);
+    return new RPC(this.chain.urls.public.rpc);
   }
 
   public get indexer(): Indexer {
-    return new Indexer(this.chain.rpcUrls.public.indexer);
+    return new Indexer(this.chain.urls.public.indexer);
   }
 
   public addConnector(connector: Connector) {

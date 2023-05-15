@@ -1,12 +1,18 @@
 import React from 'react';
-import { useConnect, useDisconnect, MetamaskConnector, useCapacities } from '@spinal-ckb/react';
+import { useConnect, useDisconnect, MetamaskConnector, useCapacities, useSendTransaction } from '@spinal-ckb/react';
 
 function App() {
+  const [to, setTo] = React.useState('');
+  const [amount, setAmount] = React.useState('');
+
   const { address, connected, connect } = useConnect({
     connector: new MetamaskConnector(),
   });
   const { disconnect } = useDisconnect();
   const { balance } = useCapacities();
+
+  const shannon = React.useMemo(() => parseFloat(amount) * 10 ** 8, [amount]);
+  const { sendTransaction } = useSendTransaction({ to, amount: shannon });
 
   return (
     <div className="App">
@@ -18,6 +24,14 @@ function App() {
         </div>
       ) : (
         <button onClick={() => connect()}>Connect</button>
+      )}
+      {connected && (
+        <div>
+          <h2>Send Transaction</h2>
+          to: <input value={to} onChange={(e) => setTo(e.target.value)} />
+          amount(CKB): <input value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <button onClick={() => sendTransaction()}>Send</button>
+        </div>
       )}
     </div>
   );
