@@ -3,7 +3,7 @@ import {
   useConnect,
   useDisconnect,
   NexusConnector,
-  MetamaskConnector,
+  // MetamaskConnector,
   useCapacities,
   useSendTransaction,
 } from '@spinal-ckb/react';

@@ -1,4 +1,4 @@
-import { BI, CellDep, Transaction, commons, helpers } from '@ckb-lumos/lumos';
+import { BI, Transaction, commons, helpers } from '@ckb-lumos/lumos';
 import { ConnecterData, Connector } from './base';
 import { Address, EIP1193Provider, Hex } from 'viem';
 import { getConfig } from 'src/config';

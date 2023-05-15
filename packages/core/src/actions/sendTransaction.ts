@@ -1,4 +1,4 @@
-import { BI, helpers, config as lumosConfig } from '@ckb-lumos/lumos';
+import { BI, helpers } from '@ckb-lumos/lumos';
 import { getConfig } from 'src/config';
 
 const TX_FEE_CAPACITY = BI.from(100000);
