@@ -1,5 +1,4 @@
 import { BI, helpers } from '@ckb-lumos/lumos';
-import { testnet } from 'src/chains';
 import { getConfig } from 'src/config';
 
 export async function getCapacities() {
@@ -15,14 +14,8 @@ export async function getCapacities() {
   }
 
   const { data } = config.getConnectState();
-  const indexer = config.indexer({ name: testnet.name });
-  if (!indexer) {
-    // FIXME: throw error
-    return BI.from(0);
-  }
-
-  const collector = indexer.collector({
-    lock: helpers.parseAddress(data!.address, { config: testnet }),
+  const collector = config.indexer.collector({
+    lock: helpers.parseAddress(data!.address, { config: config.chain }),
   });
 
   let capacities = BI.from(0);

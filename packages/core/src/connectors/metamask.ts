@@ -1,4 +1,4 @@
-import { BI, commons, helpers } from '@ckb-lumos/lumos';
+import { commons, helpers } from '@ckb-lumos/lumos';
 import { ConnecterData, Connector } from './base';
 import { EIP1193Provider } from 'viem';
 import { testnet } from 'src/chains';
@@ -28,8 +28,7 @@ export class MetamaskConnector extends Connector {
   public async connect(): Promise<ConnecterData> {
     const provider = this.getProvider();
     const accounts = await provider?.request({ method: 'eth_requestAccounts' });
-
-    const [ethAddr] = accounts;
+    const ethAddr = accounts![0];
     const omniLockScript = commons.omnilock.createOmnilockScript({ auth: { flag: 'ETHEREUM', content: ethAddr! } });
     const address = helpers.encodeToAddress(omniLockScript, { config: testnet });
 

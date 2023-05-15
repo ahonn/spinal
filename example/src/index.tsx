@@ -2,21 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   SpinalConfigProvider,
-  chains as predefineChains,
-  configureChains,
-  publicProvider,
+  chains,
 } from '@spinal-ckb/react';
 import App from './App.tsx';
 
-const { rpcClient, indexer } = configureChains(
-  [predefineChains.testnet],
-  [publicProvider()],
-);
-
 const config = {
   autoConnect: true,
-  rpcClient,
-  indexer,
+  chains: [chains.testnet],
 };
 
 const root = ReactDOM.createRoot(
