@@ -1,16 +1,23 @@
 import { atomsWithMutation } from 'jotai-tanstack-query';
 import { useAtom } from 'jotai';
-import { disconnect } from '@spinal-ckb/core';
-import { useCallback } from 'react';
+import * as core from '@spinal-ckb/core';
+import { useCallback, useMemo } from 'react';
+import { WithMutationArgs } from './type';
 
-const [, disconnectMutationAtom] = atomsWithMutation(() => ({
-  mutationKey: ['disconnect'],
-  mutationFn: async () => {
-    return disconnect();
-  },
-}));
-
-export function useDisconnect() {
+export function useDisconnect(args: WithMutationArgs<void, void>) {
+  const { onSuccess, onError, onSettled } = args;
+  const disconnectMutationAtom = useMemo(() => {
+    const [, atom] = atomsWithMutation(() => ({
+      mutationKey: ['disconnect'],
+      mutationFn: async () => {
+        return core.disconnect();
+      },
+      onSuccess,
+      onError,
+      onSettled,
+    }));
+    return atom;
+  }, [onSuccess, onError, onSettled]);
   const [{ error, isError, isLoading, isSuccess }, mutate] = useAtom(disconnectMutationAtom);
 
   const disconnect = useCallback(async () => {

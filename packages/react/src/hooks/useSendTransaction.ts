@@ -1,18 +1,18 @@
 import { atomsWithMutation } from 'jotai-tanstack-query';
-import type { MutationOptions } from '@tanstack/query-core';
 import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
+import { WithMutationArgs } from './type';
 
-export interface UseSendTransactionArgs extends Pick<MutationOptions<string>, 'onSuccess' | 'onError'> {
+export interface UseSendTransactionArgs {
   to: string;
   amount: string;
 }
 
-export function useSendTransaction(args: UseSendTransactionArgs) {
-  const { to, amount, onSuccess, onError } = args;
+export function useSendTransaction(args: WithMutationArgs<UseSendTransactionArgs, string>) {
+  const { to, amount, onSuccess, onError, onSettled } = args;
   const sendTransactionMutationAtom = useMemo(() => {
-    const [, sendTransactionMutationAtom] = atomsWithMutation(() => ({
+    const [, atom] = atomsWithMutation(() => ({
       mutationKey: ['sendTransaction'],
       mutationFn: async ({ to, amount }: UseSendTransactionArgs) => {
         const txHash = await core.sendTransaction(to, amount);
@@ -20,9 +20,10 @@ export function useSendTransaction(args: UseSendTransactionArgs) {
       },
       onSuccess,
       onError,
+      onSettled,
     }));
-    return sendTransactionMutationAtom;
-  }, [onSuccess, onError]);
+    return atom;
+  }, [onSuccess, onError, onSettled]);
 
   const [{ data, error, isError, isLoading, isSuccess }, mutate] = useAtom(sendTransactionMutationAtom);
 

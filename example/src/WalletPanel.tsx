@@ -16,7 +16,10 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   useToast,
+  useClipboard,
+  Link,
 } from '@chakra-ui/react';
+import { CopyIcon } from '@chakra-ui/icons';
 import { useConnect, useCapacities, useSendTransaction, Connector } from '@spinal-ckb/react';
 import React, { useMemo, useCallback } from 'react';
 
@@ -28,26 +31,38 @@ export interface IWalletPanelProps {
 export default function WalletPanel(props: IWalletPanelProps) {
   const { connector, colorScheme } = props;
   const toast = useToast();
+  const { onCopy, setValue } = useClipboard('');
   const [transferTo, setTransferTo] = React.useState('');
   const [amount, setAmount] = React.useState(0);
   const { connect, connected, address } = useConnect({ connector });
   const { balance } = useCapacities();
 
-  const onSuccess = useCallback((txHash) => {
-    toast({
-      title: 'Transaction sended.',
-      description: `Transaction hash: ${txHash}`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  }, [toast]);
+  const onSuccess = useCallback(
+    (txHash: string) => {
+      toast({
+        title: 'Transaction sended.',
+        description: (
+          <Link textDecorationStyle="solid" href={`https://pudge.explorer.nervos.org/transaction/${txHash}`} isExternal>
+            {txHash}
+          </Link>
+        ),
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    [toast],
+  );
 
   const { isLoading, sendTransaction } = useSendTransaction({
     to: transferTo,
     amount,
     onSuccess,
   });
+
+  React.useEffect(() => {
+    setValue(address);
+  }, [address, setValue]);
 
   const displayAddress = useMemo(() => {
     if (!address) {
@@ -62,10 +77,27 @@ export default function WalletPanel(props: IWalletPanelProps) {
       <Box height="20">
         {connected ? (
           <Box>
-            <Flex>
-              <Text fontSize="sm" color="gray.500">
-                {displayAddress}
-              </Text>
+            <Flex marginBottom={2}>
+              <Flex
+                alignItems="center"
+                paddingX={2}
+                borderWidth={1}
+                borderRadius="md"
+                backgroundColor={`${colorScheme}.100`}
+                borderColor={`${colorScheme}.300`}
+              >
+                <Text fontSize="sm" color="gray.800" marginRight={1}>
+                  Address: {displayAddress}
+                </Text>
+                <CopyIcon
+                  cursor="pointer"
+                  color="gray.800"
+                  onClick={() => {
+                    onCopy();
+                    toast({ description: 'Copied!' });
+                  }}
+                />
+              </Flex>
             </Flex>
             <Flex>
               <Stat>
