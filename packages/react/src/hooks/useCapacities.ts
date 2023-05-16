@@ -29,6 +29,7 @@ export function useCapacities() {
   }, [config, mutate]);
 
   return {
+    data: capacities,
     capacities,
     balance,
     error,

@@ -100,11 +100,11 @@ export class NexusConnector extends Connector {
     return capacities;
   }
 
-  public async getLockScript() {
+  public async getLockScript(change: 'internal' | 'external' = 'internal') {
     const provider = this.getProvider();
     const internalOffChainLocks = await provider!.request({
       method: 'wallet_fullOwnership_getOffChainLocks',
-      params: { change: 'internal' },
+      params: { change },
     });
     const [lock] = internalOffChainLocks;
     return lock!;

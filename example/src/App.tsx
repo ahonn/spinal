@@ -1,45 +1,36 @@
-import React from 'react';
-import {
-  useConnect,
-  useDisconnect,
-  NexusConnector,
-  // MetamaskConnector,
-  useCapacities,
-  useSendTransaction,
-} from '@spinal-ckb/react';
+import { Card, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import React, { useMemo, useState } from 'react';
+// @ts-ignore
+import WalletPanel from './WalletPanel.tsx';
+import { MetamaskConnector, NexusConnector } from '@spinal-ckb/react';
 
 function App() {
-  const [to, setTo] = React.useState('');
-  const [amount, setAmount] = React.useState('');
-
-  const { address, connected, connect } = useConnect({
-    connector: new NexusConnector(),
-    // connector: new MetamaskConnector(),
-  });
-  const { disconnect } = useDisconnect();
-  const { balance } = useCapacities();
-  const { sendTransaction } = useSendTransaction({ to, amount });
+  const [tabIndex, setTabIndex] = useState(0);
+  const colorScheme = useMemo(() => (tabIndex === 0 ? 'orange' : 'purple'), [tabIndex]);
+  const metamaskConnector = useMemo(() => new MetamaskConnector(), []);
+  const nexusConnector = useMemo(() => new NexusConnector(), []);
 
   return (
-    <div className="App">
-      {connected ? (
-        <div>
-          <div>address: {address}</div>
-          <div>balance: {balance ?? 0} CKB</div>
-          <button onClick={() => disconnect()}>Disconnect</button>
-        </div>
-      ) : (
-        <button onClick={() => connect()}>Connect</button>
-      )}
-      {connected && (
-        <div>
-          <h2>Send Transaction</h2>
-          to: <input value={to} onChange={(e) => setTo(e.target.value)} />
-          amount(CKB): <input value={amount} onChange={(e) => setAmount(e.target.value)} />
-          <button onClick={() => sendTransaction()}>Send</button>
-        </div>
-      )}
-    </div>
+    <Flex backgroundColor={`${colorScheme}.50`} minHeight="100vh" alignItems="center">
+      <Container>
+        <Card>
+          <Tabs colorScheme={colorScheme} onChange={(index) => setTabIndex(index)} isFitted>
+            <TabList>
+              <Tab>MetaMask</Tab>
+              <Tab>Nexus</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <WalletPanel colorScheme={colorScheme} connector={metamaskConnector} />
+              </TabPanel>
+              <TabPanel>
+                <WalletPanel colorScheme={colorScheme} connector={nexusConnector} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Card>
+      </Container>
+    </Flex>
   );
 }
 

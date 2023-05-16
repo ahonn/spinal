@@ -100,11 +100,11 @@ export class MetamaskConnector extends Connector {
 
     tx = commons.omnilock.prepareSigningEntries(tx);
     const { message } = tx.signingEntries.get(0)!;
-
     let signature: string = await provider!.request({
       method: 'personal_sign',
       params: [message as Hex, provider!.selectedAddress],
     });
+
     // Fix ECDSA recoveryId v parameter
     // https://bitcoin.stackexchange.com/questions/38351/ecdsa-v-r-s-what-is-v
     let v = Number.parseInt(signature.slice(-2), 16);

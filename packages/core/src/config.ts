@@ -10,7 +10,7 @@ import { chainAtom } from './store/chain';
 export type CreateConfigParameters = {
   autoConnect?: boolean;
   connectors?: Connector[];
-  chains: [Chain];
+  chains: Chain[];
 };
 
 export class Config {
@@ -75,11 +75,11 @@ export class Config {
     return new Indexer(this.chain.urls.public.indexer);
   }
 
-  public addConnector(connector: Connector) {
-    if (this.connectors.some((conn) => conn.id === connector.id)) {
-      return;
+  public setConnector(connector: Connector) {
+    if (!this.connectors.some((conn) => conn.id === connector.id)) {
+      this.connectors.push(connector);
     }
-    this.connectors.push(connector);
+    this.store.set(connectAtom, { connector, data: undefined, status: 'disconnect' });
     if (this.params.autoConnect) {
       this.autoConnect();
     }
