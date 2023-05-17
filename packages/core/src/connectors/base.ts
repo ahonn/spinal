@@ -2,9 +2,10 @@ import { BI, Script, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Chain } from 'src/chains';
 import { getConfig } from 'src/config';
 
-export interface ConnecterData {
+export interface ConnecterData<T = unknown> {
   address: string;
   chain: Chain;
+  data: T;
 }
 
 export interface Connector {
@@ -14,7 +15,6 @@ export interface Connector {
 
 export abstract class Connector {
   abstract id: string;
-  abstract getProvider(): any;
   abstract connect(): Promise<ConnecterData>;
   abstract injectCapacity(
     tx: helpers.TransactionSkeletonType,

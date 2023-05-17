@@ -1,3 +1,4 @@
 export * from './base';
 export * from './nexus';
-export * from './metamask';
+export * from './metaMask';
+export * from './joyId';

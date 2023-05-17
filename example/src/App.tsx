@@ -2,18 +2,23 @@ import { Text, Card, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } 
 import React, { useMemo, useState } from 'react';
 // @ts-ignore
 import WalletPanel from './WalletPanel.tsx';
-import { MetamaskConnector, NexusConnector, useConfig } from '@spinal-ckb/react';
+import { MetaMaskConnector, NexusConnector, JoyIdConnector, useConfig } from '@spinal-ckb/react';
 
 const TABS = [
   {
     name: 'MetaMask',
     colorScheme: 'orange',
-    connector: new MetamaskConnector(),
+    connector: new MetaMaskConnector(),
   },
   {
     name: 'Nexus',
     colorScheme: 'purple',
     connector: new NexusConnector(),
+  },
+  {
+    name: 'JoyID',
+    colorScheme: 'green',
+    connector: new JoyIdConnector(),
   },
 ];
 

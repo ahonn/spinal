@@ -23,10 +23,10 @@ const OMNILOCK_SIGNATURE_PLACEHOLDER = bytes.hexify(
   ),
 );
 
-export class MetamaskConnector extends Connector {
-  public id = 'metamask';
+export class MetaMaskConnector extends Connector {
+  public id = 'MetaMask';
 
-  public getProvider(): Window['ethereum'] | undefined {
+  private getProvider(): Window['ethereum'] | undefined {
     if (typeof window === 'undefined') {
       return undefined;
     }
@@ -37,7 +37,7 @@ export class MetamaskConnector extends Connector {
     return ethereum;
   }
 
-  public async connect(): Promise<ConnecterData> {
+  public async connect(): Promise<ConnecterData<Hex[] | undefined>> {
     const provider = this.getProvider();
     const config = getConfig();
     const accounts = await provider?.request({ method: 'eth_requestAccounts' });
@@ -48,6 +48,7 @@ export class MetamaskConnector extends Connector {
     return {
       address,
       chain: config.chain,
+      data: accounts,
     };
   }
 

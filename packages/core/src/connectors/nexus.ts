@@ -3,7 +3,7 @@ import { BI, Cell, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Connector } from './base';
 import { getConfig } from 'src/config';
 import { bytes } from '@ckb-lumos/codec';
-import { blockchain } from '@ckb-lumos/base';
+import { Script, blockchain } from '@ckb-lumos/base';
 import { FullOwnershipProvider } from '@nexus-wallet/ownership-providers';
 import { Events, InjectedCkb, RpcMethods } from '@nexus-wallet/protocol';
 import { getScriptCellDep } from './utils';
@@ -21,9 +21,9 @@ export const SECP256K1_BLAKE160_WITNESS_PLACEHOLDER = bytes.hexify(
 );
 
 export class NexusConnector extends Connector {
-  public id = 'nexus';
+  public id = 'Nexus';
 
-  public getProvider(): Window['ckb'] | null {
+  private getProvider(): Window['ckb'] | null {
     if (typeof window === 'undefined') {
       return null;
     }
@@ -62,7 +62,7 @@ export class NexusConnector extends Connector {
     );
   }
 
-  public async connect(): Promise<ConnecterData> {
+  public async connect(): Promise<ConnecterData<Script | undefined>> {
     const provider = this.getProvider();
     if (!provider) {
       throw new Error('Nexus Wallet not found');
@@ -79,6 +79,7 @@ export class NexusConnector extends Connector {
     return {
       address,
       chain: config.chain,
+      data: lock,
     };
   }
 
