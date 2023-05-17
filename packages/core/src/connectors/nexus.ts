@@ -116,7 +116,7 @@ export class NexusConnector extends Connector {
   ): Promise<helpers.TransactionSkeletonType> {
     const provider = this.getProvider();
     const fullOwnershipProvider = new FullOwnershipProvider({ ckb: provider! });
-    tx = await fullOwnershipProvider.injectCapacity(tx, { amount: neededCapacity });
+    tx = await fullOwnershipProvider.injectCapacity(tx, { amount: neededCapacity as unknown as any });
     return tx;
   }
 
