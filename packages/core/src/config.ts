@@ -39,7 +39,7 @@ export class Config {
 
     this.store.sub(connectorAtom, () => {
       const connector = this.store.get(connectorAtom);
-      if (this.autoConnect && connector) {
+      if (this.autoConnect && connector && this.getConnectData(connector)) {
         connect({ connector });
       }
     });
