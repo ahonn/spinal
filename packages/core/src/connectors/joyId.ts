@@ -4,20 +4,26 @@ import { ConnecterData, Connector } from './base';
 import { testnet } from 'src/chains';
 
 export class JoyIdConnector extends Connector {
-  public id = 'JoyId';
+  public id = 'JoyID';
+  private data: ConnecterData<AuthResponseData | undefined> | undefined;
 
   public async connect(): Promise<ConnecterData<AuthResponseData | undefined>> {
+    if (this.data) {
+      return this.data;
+    }
     const res = await authWithPopup({
       redirectURL: location.origin + '/',
     });
     if (res.error) {
       throw new Error(res.error);
     }
-    return {
+    const data = {
       address: res.data!.address,
       chain: testnet, // TODO: waiting for Joy ID support mainnet
       data: res.data,
     };
+    this.data = data;
+    return data;
   }
 
   public async disconnect(): Promise<void> {

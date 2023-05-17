@@ -1,6 +1,5 @@
 import { BI, Script, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Chain } from 'src/chains';
-import { getConfig } from 'src/config';
 
 export interface ConnecterData<T = unknown> {
   address: string;
@@ -22,10 +21,4 @@ export abstract class Connector {
   ): Promise<helpers.TransactionSkeletonType>;
   abstract signTransaction(tx: helpers.TransactionSkeletonType): Promise<Transaction>;
   abstract disconnect(): Promise<void>;
-
-  protected getData() {
-    const config = getConfig();
-    const data = config.getConnectData();
-    return data;
-  }
 }

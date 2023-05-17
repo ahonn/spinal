@@ -19,6 +19,9 @@ const TABS = [
     name: 'JoyID',
     colorScheme: 'green',
     connector: new JoyIdConnector(),
+    features: {
+      transfer: false,
+    },
   },
 ];
 
@@ -39,7 +42,7 @@ function App() {
         <Text fontSize="sm" color="gray.500" marginBottom={2}>
           {`<SpinalExample />`}
         </Text>
-        <Card>
+        <Card minHeight="420px">
           <Tabs colorScheme={colorScheme} onChange={onChangeTab} isFitted>
             <TabList>
               {TABS.map(({ name }) => (
@@ -47,9 +50,9 @@ function App() {
               ))}
             </TabList>
             <TabPanels>
-              {TABS.map(({ name, colorScheme, connector }) => (
+              {TABS.map(({ name, colorScheme, connector, features }) => (
                 <TabPanel key={name}>
-                  <WalletPanel colorScheme={colorScheme} connector={connector} />
+                  <WalletPanel colorScheme={colorScheme} connector={connector} features={features} />
                 </TabPanel>
               ))}
             </TabPanels>

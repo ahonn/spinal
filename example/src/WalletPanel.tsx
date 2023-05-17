@@ -24,12 +24,15 @@ import { useConnect, useCapacities, useSendTransaction, Connector } from '@spina
 import React, { useMemo, useCallback } from 'react';
 
 export interface IWalletPanelProps {
-  connector: Connector;
   colorScheme: string;
+  connector: Connector;
+  features?: {
+    transfer?: boolean;
+  };
 }
 
 export default function WalletPanel(props: IWalletPanelProps) {
-  const { connector, colorScheme } = props;
+  const { connector, colorScheme, features } = props;
   const toast = useToast();
   const { onCopy, setValue } = useClipboard('');
   const [transferTo, setTransferTo] = React.useState('');
@@ -114,8 +117,8 @@ export default function WalletPanel(props: IWalletPanelProps) {
           </Button>
         )}
       </Box>
-      <Divider marginY="2" />
-      <Box>
+      <Divider marginTop="3" marginBottom="2" />
+      <Box display={features?.transfer !== false ? 'block' : 'none'}>
         <Flex marginBottom="2">
           <Text fontSize="xl" fontWeight="semibold">
             Send Transaction

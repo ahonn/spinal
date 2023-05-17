@@ -76,11 +76,12 @@ export class NexusConnector extends Connector {
     });
     const [lock] = externalOffChainLocks;
     const address = helpers.encodeToAddress(lock!);
-    return {
+    const data = {
       address,
       chain: config.chain,
       data: lock,
     };
+    return data;
   }
 
   public async disconnect(): Promise<void> {

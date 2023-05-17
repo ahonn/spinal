@@ -25,6 +25,7 @@ const OMNILOCK_SIGNATURE_PLACEHOLDER = bytes.hexify(
 
 export class MetaMaskConnector extends Connector {
   public id = 'MetaMask';
+  private data: ConnecterData<Hex[] | undefined> | undefined;
 
   private getProvider(): Window['ethereum'] | undefined {
     if (typeof window === 'undefined') {
@@ -45,11 +46,13 @@ export class MetaMaskConnector extends Connector {
     const omniLockScript = commons.omnilock.createOmnilockScript({ auth: { flag: 'ETHEREUM', content: ethAddr! } });
     const address = helpers.encodeToAddress(omniLockScript);
 
-    return {
+    const data = {
       address,
       chain: config.chain,
       data: accounts,
     };
+    this.data = data;
+    return data;
   }
 
   public async injectCapacity(
@@ -57,7 +60,7 @@ export class MetaMaskConnector extends Connector {
     neededCapacity: BI,
   ): Promise<helpers.TransactionSkeletonType> {
     const config = getConfig();
-    const { address } = this.getData()!;
+    const { address } = this.data!;
     const fromScript = helpers.parseAddress(address);
 
     let capacities = BI.from(0);
