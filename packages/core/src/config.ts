@@ -1,8 +1,7 @@
+import type { ConnecterData, Connector } from './connectors/base';
 import { getDefaultStore } from 'jotai';
-import type { Connector } from './connectors/base';
-import type { ConnectState } from './store/connect';
-import { connect } from './actions/connect';
-import { connectAtom } from './store/connect';
+import { connectAtom, connectorAtom } from './store/connect';
+import { connect } from './actions';
 import { Chain, testnet } from './chains';
 import { Indexer, RPC, config as lumosConfig } from '@ckb-lumos/lumos';
 import { chainAtom } from './store/chain';
@@ -16,13 +15,13 @@ export type CreateConfigParameters = {
 export class Config {
   public static instance: Config;
 
-  private params: CreateConfigParameters;
-  public chains: Chain[];
+  private chains: Chain[];
+  public autoConnect: boolean;
   public store: ReturnType<typeof getDefaultStore>;
   public connectors: Connector[];
 
   constructor(params: CreateConfigParameters) {
-    this.params = params;
+    this.autoConnect = params.autoConnect ?? false;
     this.chains = params.chains;
     this.connectors = params.connectors || [];
     this.store = getDefaultStore();
@@ -38,9 +37,12 @@ export class Config {
       lumosConfig.initializeConfig(chain);
     });
 
-    if (params.autoConnect && typeof window !== undefined) {
-      setTimeout(() => this.autoConnect(), 0);
-    }
+    this.store.sub(connectorAtom, () => {
+      const connector = this.store.get(connectorAtom);
+      if (this.autoConnect && connector) {
+        connect({ connector });
+      }
+    });
   }
 
   public static create(params: CreateConfigParameters) {
@@ -50,16 +52,8 @@ export class Config {
     return Config.instance;
   }
 
-  private autoConnect() {
-    if (this.connector) {
-      connect({ connector: this.connector });
-    }
-  }
-
   public get connector(): Connector | undefined {
-    const connectState = this.store.get(connectAtom);
-    const connector = this.connectors.find((connector) => connector.id === connectState.connector?.id);
-    return connector;
+    return this.store.get(connectorAtom);
   }
 
   public get chain(): Chain {
@@ -75,29 +69,40 @@ export class Config {
     return new Indexer(this.chain.urls.public.indexer);
   }
 
-  public setConnector(connector: Connector) {
+  public addConnector(connector: Connector) {
     if (!this.connectors.some((conn) => conn.id === connector.id)) {
       this.connectors.push(connector);
     }
-    this.store.set(connectAtom, { connector, data: undefined, status: 'disconnect' });
-    if (this.params.autoConnect) {
-      this.autoConnect();
+    if (!this.connector) {
+      this.store.set(connectorAtom, this.connectors[0]);
     }
   }
 
-  public getConnectState(): ConnectState {
-    return this.store.get(connectAtom);
+  public setActiveConnector(connector: Connector) {
+    this.addConnector(connector);
+    this.store.set(connectorAtom, connector);
   }
 
-  public onConnectChange(onChange: (state: ConnectState) => void) {
-    this.store.sub(connectAtom, () => {
-      const connectState = this.store.get(connectAtom);
-      onChange(connectState);
+  public getConnectData(connector?: Connector): ConnecterData | undefined {
+    return this.store.get(connectAtom(connector?.id ?? this.connector?.id));
+  }
+
+  public onConnectorChange(callback: (connector?: Connector) => void) {
+    this.store.sub(connectorAtom, () => {
+      callback(this.connector);
+    });
+  }
+
+  public onConnectDataChange(connector: Connector, callback: (data?: ConnecterData) => void) {
+    this.store.sub(connectAtom(connector.id), () => {
+      callback(this.getConnectData(connector));
     });
   }
 
   public resetStore() {
-    this.store.set(connectAtom, undefined);
+    this.connectors.forEach((connector) => {
+      this.store.set(connectAtom(connector.id), undefined);
+    });
     this.store.set(chainAtom, undefined);
   }
 }

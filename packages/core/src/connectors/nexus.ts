@@ -23,7 +23,7 @@ export const SECP256K1_BLAKE160_WITNESS_PLACEHOLDER = bytes.hexify(
 export class NexusConnector extends Connector {
   public id = 'nexus';
 
-  private getProvider(): Window['ckb'] | null {
+  public getProvider(): Window['ckb'] | null {
     if (typeof window === 'undefined') {
       return null;
     }

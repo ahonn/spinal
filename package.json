@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
-    "build": "pnpm -r --parallel run build",
+    "build": "pnpm run build:core && pnpm run build:react",
+    "build:core": "cd ./packages/core && pnpm run build",
+    "build:react": "cd ./packages/react && pnpm run build",
+    "build:example": "pnpm run build && cd ./example && pnpm run build",
     "lint": "eslint . --cache",
     "publish": "pnpm run build && pnpm publish --access=public -r"
   },

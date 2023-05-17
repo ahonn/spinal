@@ -5,9 +5,8 @@ const TX_FEE_CAPACITY = BI.from(100000);
 
 export async function sendTransaction(to: string, amount: string) {
   const config = getConfig();
-  const connectState = config.getConnectState();
   const connector = config.connector;
-  if (connectState.status !== 'connected') {
+  if (!connector) {
     throw new Error('Please connect wallet first');
   }
   const amountCapacity = BI.from(amount).mul(10 ** 8);

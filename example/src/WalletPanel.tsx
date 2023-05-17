@@ -50,6 +50,8 @@ export default function WalletPanel(props: IWalletPanelProps) {
         duration: 3000,
         isClosable: true,
       });
+      setTransferTo('');
+      setAmount(0);
     },
     [toast],
   );
@@ -144,7 +146,11 @@ export default function WalletPanel(props: IWalletPanelProps) {
             </NumberInputStepper>
           </NumberInput>
         </FormControl>
-        <Button colorScheme={colorScheme} onClick={() => sendTransaction()} isLoading={isLoading}>
+        <Button
+          colorScheme={colorScheme}
+          onClick={() => transferTo && amount && sendTransaction()}
+          isLoading={isLoading}
+        >
           Submit
         </Button>
       </Box>

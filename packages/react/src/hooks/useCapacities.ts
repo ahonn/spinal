@@ -4,14 +4,14 @@ import { useAtom } from 'jotai';
 import { atomsWithMutation } from 'jotai-tanstack-query';
 import { useEffect, useMemo } from 'react';
 import { useConfig } from 'src/context';
-import { WithMutationArgs } from './type';
+import { WithMutationArgs, defaultArgs } from './args';
 
 export const getBalanceByCapacity = (capacity: BI): string => {
   return (Math.floor(BI.from(capacity).toNumber() / 10 ** 6) / 100).toFixed(2);
 };
 
-export function useCapacities(args: WithMutationArgs<void, BI>) {
-  const { onSuccess, onError, onSettled } = args;
+export function useCapacities(args?: WithMutationArgs<void, BI>) {
+  const { onSuccess, onError, onSettled } = args ?? defaultArgs;
   const config = useConfig();
   const capacitiesMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
@@ -30,7 +30,8 @@ export function useCapacities(args: WithMutationArgs<void, BI>) {
   const balance = useMemo(() => (capacities ? getBalanceByCapacity(capacities) : '0'), [capacities]);
 
   useEffect(() => {
-    config?.onConnectChange(() => {
+    mutate([undefined]);
+    config?.onConnectorChange(() => {
       mutate([undefined]);
     });
   }, [config, mutate]);

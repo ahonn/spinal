@@ -14,6 +14,7 @@ export interface Connector {
 
 export abstract class Connector {
   abstract id: string;
+  abstract getProvider(): any;
   abstract connect(): Promise<ConnecterData>;
   abstract injectCapacity(
     tx: helpers.TransactionSkeletonType,
@@ -22,9 +23,9 @@ export abstract class Connector {
   abstract signTransaction(tx: helpers.TransactionSkeletonType): Promise<Transaction>;
   abstract disconnect(): Promise<void>;
 
-  protected getState() {
+  protected getData() {
     const config = getConfig();
-    const state = config.getConnectState();
-    return state;
+    const data = config.getConnectData();
+    return data;
   }
 }

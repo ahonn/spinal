@@ -2,15 +2,15 @@ import { atomsWithMutation } from 'jotai-tanstack-query';
 import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { WithMutationArgs } from './type';
+import { WithMutationArgs, defaultArgs } from './args';
 
 export interface UseSendTransactionArgs {
   to: string;
   amount: string;
 }
 
-export function useSendTransaction(args: WithMutationArgs<UseSendTransactionArgs, string>) {
-  const { to, amount, onSuccess, onError, onSettled } = args;
+export function useSendTransaction(args?: WithMutationArgs<UseSendTransactionArgs, string>) {
+  const { to, amount, onSuccess, onError, onSettled } = args ?? defaultArgs;
   const sendTransactionMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
       mutationKey: ['sendTransaction'],

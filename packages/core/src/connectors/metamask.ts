@@ -26,13 +26,13 @@ const OMNILOCK_SIGNATURE_PLACEHOLDER = bytes.hexify(
 export class MetamaskConnector extends Connector {
   public id = 'metamask';
 
-  private getProvider(): Window['ethereum'] | null {
+  public getProvider(): Window['ethereum'] | undefined {
     if (typeof window === 'undefined') {
-      return null;
+      return undefined;
     }
     const ethereum = window?.ethereum;
     if (!ethereum || !ethereum.isMetaMask) {
-      return null;
+      return undefined;
     }
     return ethereum;
   }
@@ -56,7 +56,7 @@ export class MetamaskConnector extends Connector {
     neededCapacity: BI,
   ): Promise<helpers.TransactionSkeletonType> {
     const config = getConfig();
-    const { address } = this.getState().data!;
+    const { address } = this.getData()!;
     const fromScript = helpers.parseAddress(address);
 
     let capacities = BI.from(0);

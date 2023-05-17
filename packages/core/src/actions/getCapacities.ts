@@ -13,9 +13,12 @@ export async function getCapacities() {
     return capacities;
   }
 
-  const { data } = config.getConnectState();
+  const data = config.getConnectData();
+  if (!data) {
+    return BI.from(0);
+  }
   const collector = config.indexer.collector({
-    lock: helpers.parseAddress(data!.address),
+    lock: helpers.parseAddress(data?.address),
   });
 
   let capacities = BI.from(0);
