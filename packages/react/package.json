@@ -33,7 +33,6 @@
     "@spinal-ckb/core": "workspace:*",
     "@tanstack/query-core": "^4.29.5",
     "jotai": "^2.1.0",
-    "jotai-devtools": "^0.5.3",
     "jotai-tanstack-query": "^0.7.0"
   }
 }

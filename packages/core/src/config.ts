@@ -37,12 +37,12 @@ export class Config {
       lumosConfig.initializeConfig(chain);
     });
 
-    this.store.sub(connectorAtom, () => {
-      const connector = this.store.get(connectorAtom);
-      if (this.autoConnect && connector && this.getConnectData(connector)) {
-        connect({ connector });
-      }
-    });
+    // this.store.sub(connectorAtom, () => {
+    //   const connector = this.store.get(connectorAtom);
+    //   if (this.autoConnect && connector && this.getConnectData(connector)) {
+    //     connect({ connector });
+    //   }
+    // });
   }
 
   public static create(params: CreateConfigParameters) {
@@ -75,6 +75,9 @@ export class Config {
     }
     if (!this.connector) {
       this.store.set(connectorAtom, this.connectors[0]);
+    }
+    if (this.autoConnect && this.getConnectData(connector)) {
+      connect({ connector });
     }
   }
 
