@@ -91,13 +91,13 @@ export class Config {
   }
 
   public onConnectorChange(callback: (connector?: Connector) => void) {
-    this.store.sub(connectorAtom, () => {
+    return this.store.sub(connectorAtom, () => {
       callback(this.connector);
     });
   }
 
   public onConnectDataChange(connector: Connector, callback: (data?: ConnecterData) => void) {
-    this.store.sub(connectAtom(connector.id), () => {
+    return this.store.sub(connectAtom(connector.id), () => {
       callback(this.getConnectData(connector));
     });
   }

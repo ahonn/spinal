@@ -36,7 +36,7 @@ export function useConnect(
 
   useEffect(() => {
     config?.addConnector(connector);
-    config?.onConnectDataChange(connector, setData);
+    return config?.onConnectDataChange(connector, setData);
   }, [config, connector]);
 
   const connect = useCallback(() => {

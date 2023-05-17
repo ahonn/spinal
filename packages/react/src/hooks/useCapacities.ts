@@ -13,6 +13,7 @@ export const getBalanceByCapacity = (capacity: BI): string => {
 export function useCapacities(args?: WithMutationArgs<void, BI>) {
   const { onSuccess, onError, onSettled } = args ?? defaultArgs;
   const config = useConfig();
+  const connector = config?.connector;
   const capacitiesMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
       mutationKey: ['capacities'],
@@ -30,11 +31,13 @@ export function useCapacities(args?: WithMutationArgs<void, BI>) {
   const balance = useMemo(() => (capacities ? getBalanceByCapacity(capacities) : '0'), [capacities]);
 
   useEffect(() => {
-    mutate([undefined]);
-    config?.onConnectorChange(() => {
+    if (connector) {
       mutate([undefined]);
-    });
-  }, [config, mutate]);
+      return config?.onConnectDataChange(connector, () => {
+        mutate([undefined]);
+      });
+    }
+  }, [config, connector, mutate]);
 
   return {
     data: capacities,
