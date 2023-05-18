@@ -1,5 +1,5 @@
 import type { ConnecterData, Connector } from './connectors/base';
-import { getDefaultStore } from 'jotai';
+import { createStore } from 'jotai';
 import { connectAtom, connectorAtom } from './store/connect';
 import { connect } from './actions';
 import { Chain, testnet } from './chains';
@@ -17,14 +17,14 @@ export class Config {
 
   private chains: Chain[];
   public autoConnect: boolean;
-  public store: ReturnType<typeof getDefaultStore>;
+  public store: ReturnType<typeof createStore>;
   public connectors: Connector[];
 
   constructor(params: CreateConfigParameters) {
     this.autoConnect = params.autoConnect ?? false;
     this.chains = params.chains;
     this.connectors = params.connectors || [];
-    this.store = getDefaultStore();
+    this.store = createStore();
 
     const chain = this.store.get(chainAtom) ?? this.chains[0] ?? testnet;
     if (this.store.get(chainAtom)?.name !== chain.name) {
@@ -36,13 +36,6 @@ export class Config {
       const chain = this.store.get(chainAtom);
       lumosConfig.initializeConfig(chain);
     });
-
-    // this.store.sub(connectorAtom, () => {
-    //   const connector = this.store.get(connectorAtom);
-    //   if (this.autoConnect && connector && this.getConnectData(connector)) {
-    //     connect({ connector });
-    //   }
-    // });
   }
 
   public static create(params: CreateConfigParameters) {
