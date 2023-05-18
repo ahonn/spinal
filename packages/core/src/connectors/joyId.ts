@@ -1,13 +1,13 @@
 import { BI, Transaction, helpers } from '@ckb-lumos/lumos';
 import { AuthResponseData, authWithPopup } from '@joyid/core';
-import { ConnecterData, Connector } from './base';
+import { ConnectorData, Connector } from './base';
 import { testnet } from 'src/chains';
 
 export class JoyIdConnector extends Connector {
   public id = 'JoyID';
-  private data: ConnecterData<AuthResponseData | undefined> | undefined;
+  private data: ConnectorData<AuthResponseData | undefined> | undefined;
 
-  public async connect(): Promise<ConnecterData<AuthResponseData | undefined>> {
+  public async connect(): Promise<ConnectorData<AuthResponseData | undefined>> {
     if (this.data) {
       return this.data;
     }
@@ -24,10 +24,6 @@ export class JoyIdConnector extends Connector {
     };
     this.data = data;
     return data;
-  }
-
-  public async disconnect(): Promise<void> {
-    return;
   }
 
   public async injectCapacity(

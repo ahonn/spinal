@@ -18,9 +18,10 @@ import {
   useToast,
   useClipboard,
   Link,
+  Spacer,
 } from '@chakra-ui/react';
 import { CopyIcon } from '@chakra-ui/icons';
-import { useConnect, useCapacities, useSendTransaction, Connector } from '@spinal-ckb/react';
+import { useConnect, useCapacities, useSendTransaction, Connector, useDisconnect } from '@spinal-ckb/react';
 import React, { useMemo, useCallback } from 'react';
 
 export interface IWalletPanelProps {
@@ -38,6 +39,7 @@ export default function WalletPanel(props: IWalletPanelProps) {
   const [transferTo, setTransferTo] = React.useState('');
   const [amount, setAmount] = React.useState(0);
   const { connect, connected, address } = useConnect({ connector });
+  const { disconnect } = useDisconnect();
   const { balance } = useCapacities();
 
   const onSuccess = useCallback(
@@ -61,12 +63,12 @@ export default function WalletPanel(props: IWalletPanelProps) {
 
   const { isLoading, sendTransaction } = useSendTransaction({
     to: transferTo,
-    amount,
+    amount: amount.toString(),
     onSuccess,
   });
 
   React.useEffect(() => {
-    setValue(address);
+    setValue(address!);
   }, [address, setValue]);
 
   const displayAddress = useMemo(() => {
@@ -74,7 +76,7 @@ export default function WalletPanel(props: IWalletPanelProps) {
       return '';
     }
     const len = address.length;
-    return address!.substring(0, 20) + '...' + address.substring(len - 21, len - 1);
+    return address!.substring(0, 15) + '...' + address.substring(len - 15, len);
   }, [address]);
 
   return (
@@ -109,6 +111,10 @@ export default function WalletPanel(props: IWalletPanelProps) {
                 <StatLabel>Balance</StatLabel>
                 <StatNumber>{balance} CKB</StatNumber>
               </Stat>
+              <Spacer />
+              <Button size="sm" onClick={() => disconnect()}>
+                Disconnect
+              </Button>
             </Flex>
           </Box>
         ) : (

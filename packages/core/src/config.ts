@@ -1,4 +1,4 @@
-import type { ConnecterData, Connector } from './connectors/base';
+import type { ConnectorData, Connector } from './connectors/base';
 import { createStore } from 'jotai';
 import { connectAtom, connectorAtom } from './store/connect';
 import { connect } from './actions';
@@ -79,7 +79,7 @@ export class Config {
     this.store.set(connectorAtom, connector);
   }
 
-  public getConnectData(connector?: Connector): ConnecterData | undefined {
+  public getConnectData(connector?: Connector): ConnectorData | undefined {
     return this.store.get(connectAtom(connector?.id ?? this.connector?.id));
   }
 
@@ -89,17 +89,17 @@ export class Config {
     });
   }
 
-  public onConnectDataChange(connector: Connector, callback: (data?: ConnecterData) => void) {
+  public onConnectDataChange(connector: Connector, callback: (data?: ConnectorData) => void) {
     return this.store.sub(connectAtom(connector.id), () => {
       callback(this.getConnectData(connector));
     });
   }
 
-  public resetStore() {
-    this.connectors.forEach((connector) => {
-      this.store.set(connectAtom(connector.id), undefined);
-    });
-    this.store.set(chainAtom, undefined);
+  public disconnect() {
+    if (this.connector) {
+      this.connector.doDisconnect();
+      this.store.set(connectAtom(this.connector.id), undefined);
+    }
   }
 }
 

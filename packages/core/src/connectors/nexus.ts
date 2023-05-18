@@ -1,4 +1,4 @@
-import type { ConnecterData } from './base';
+import type { ConnectorData } from './base';
 import { BI, Cell, Transaction, helpers } from '@ckb-lumos/lumos';
 import { Connector } from './base';
 import { getConfig } from 'src/config';
@@ -62,7 +62,7 @@ export class NexusConnector extends Connector {
     );
   }
 
-  public async connect(): Promise<ConnecterData<Script | undefined>> {
+  public async connect(): Promise<ConnectorData<Script | undefined>> {
     const provider = this.getProvider();
     if (!provider) {
       throw new Error('Nexus Wallet not found');
@@ -82,10 +82,6 @@ export class NexusConnector extends Connector {
       data: lock,
     };
     return data;
-  }
-
-  public async disconnect(): Promise<void> {
-    return;
   }
 
   public async getCapacities(): Promise<BI> {

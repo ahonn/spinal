@@ -275,7 +275,13 @@ importers:
       jotai-tanstack-query:
         specifier: ^0.7.0
         version: 0.7.0(@tanstack/query-core@4.29.5)(jotai@2.1.0)
+      lodash.throttle:
+        specifier: ^4.1.1
+        version: 4.1.1
     devDependencies:
+      '@types/lodash.throttle':
+        specifier: ^4.1.7
+        version: 4.1.7
       '@types/react':
         specifier: ^18.2.6
         version: 18.2.6
@@ -4509,9 +4515,14 @@ packages:
       '@types/lodash': 4.14.194
     dev: false
 
+  /@types/lodash.throttle@4.1.7:
+    resolution: {integrity: sha512-znwGDpjCHQ4FpLLx19w4OXDqq8+OvREa05H89obtSyXyOFKL3dDjCslsmfBz0T2FU8dmf5Wx1QvogbINiGIu9g==}
+    dependencies:
+      '@types/lodash': 4.14.194
+    dev: true
+
   /@types/lodash@4.14.194:
     resolution: {integrity: sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g==}
-    dev: false
 
   /@types/mdast@3.0.11:
     resolution: {integrity: sha512-Y/uImid8aAwrEA24/1tcRZwpxX3pIFTSilcNDKSPn+Y2iDywSEachzRuvgAYYLR3wpGXAsMbv5lvKLDZLeYPAw==}
@@ -9676,6 +9687,10 @@ packages:
 
   /lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz}
+    dev: false
+
+  /lodash.throttle@4.1.1:
+    resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
     dev: false
 
   /lodash.uniq@4.5.0:

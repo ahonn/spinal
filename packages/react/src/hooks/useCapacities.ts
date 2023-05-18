@@ -2,9 +2,10 @@ import { BI } from '@ckb-lumos/lumos';
 import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { atomsWithMutation } from 'jotai-tanstack-query';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useConfig } from 'src/context';
 import { WithMutationArgs, defaultArgs } from './args';
+import throttle from 'lodash.throttle';
 
 export const getBalanceByCapacity = (capacity: BI): string => {
   return (Math.floor(BI.from(capacity).toNumber() / 10 ** 6) / 100).toFixed(2);
@@ -13,7 +14,6 @@ export const getBalanceByCapacity = (capacity: BI): string => {
 export function useCapacities(args?: WithMutationArgs<void, BI>) {
   const { onSuccess, onError, onSettled } = args ?? defaultArgs;
   const config = useConfig();
-  const connector = config?.connector;
   const capacitiesMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
       mutationKey: ['capacities'],
@@ -30,17 +30,28 @@ export function useCapacities(args?: WithMutationArgs<void, BI>) {
   const [{ data: capacities, error, isError, isLoading, isSuccess }, mutate] = useAtom(capacitiesMutationAtom);
   const balance = useMemo(() => (capacities ? getBalanceByCapacity(capacities) : '0'), [capacities]);
 
-  useEffect(() => {
-    if (connector) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const refresh: () => void = useCallback(
+    throttle(() => {
       mutate([undefined]);
-      return config?.onConnectDataChange(connector, () => {
-        mutate([undefined]);
+    }, 200),
+    [mutate],
+  );
+
+  useEffect(() => {
+    config?.onConnectorChange(() => {
+      refresh();
+    });
+    if (config?.connector) {
+      return config?.onConnectDataChange(config.connector, () => {
+        refresh();
       });
     }
-  }, [config, connector, mutate]);
+  }, [config, refresh]);
 
   return {
     data: capacities,
+    refresh,
     capacities,
     balance,
     error,

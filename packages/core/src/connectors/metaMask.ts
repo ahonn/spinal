@@ -1,5 +1,5 @@
 import { BI, Transaction, commons, helpers } from '@ckb-lumos/lumos';
-import { ConnecterData, Connector } from './base';
+import { ConnectorData, Connector } from './base';
 import { Address, EIP1193Provider, Hex } from 'viem';
 import { getConfig } from 'src/config';
 import { bytes } from '@ckb-lumos/codec';
@@ -25,7 +25,7 @@ const OMNILOCK_SIGNATURE_PLACEHOLDER = bytes.hexify(
 
 export class MetaMaskConnector extends Connector {
   public id = 'MetaMask';
-  private data: ConnecterData<Hex[] | undefined> | undefined;
+  private data: ConnectorData<Hex[] | undefined> | undefined;
 
   private getProvider(): Window['ethereum'] | undefined {
     if (typeof window === 'undefined') {
@@ -38,7 +38,7 @@ export class MetaMaskConnector extends Connector {
     return ethereum;
   }
 
-  public async connect(): Promise<ConnecterData<Hex[] | undefined>> {
+  public async connect(): Promise<ConnectorData<Hex[] | undefined>> {
     const provider = this.getProvider();
     const config = getConfig();
     const accounts = await provider?.request({ method: 'eth_requestAccounts' });
@@ -126,9 +126,5 @@ export class MetaMaskConnector extends Connector {
     tx = tx.update('witnesses', (witnesses) => witnesses.set(0, signedWitness));
     const signedTx = helpers.createTransactionFromSkeleton(tx);
     return signedTx;
-  }
-
-  public async disconnect(): Promise<void> {
-    return;
   }
 }

@@ -8,7 +8,13 @@ export interface ConnectArgs {
 
 export async function connect({ connector }: ConnectArgs) {
   const config = getConfig();
-  const data = await connector.connect();
+  if (connector.status === 'connected') {
+    return {
+      connector,
+      data: config.store.get(connectAtom(connector.id)),
+    };
+  }
+  const data = await connector.doConnect();
   config.store.set(connectAtom(connector.id), data);
 
   return {

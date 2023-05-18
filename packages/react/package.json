@@ -1,6 +1,6 @@
 {
   "name": "@spinal-ckb/react",
-  "version": "0.1.1",
+  "version": "0.1.9",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,7 @@
     "typescript": ">=4.9.4"
   },
   "devDependencies": {
+    "@types/lodash.throttle": "^4.1.7",
     "@types/react": "^18.2.6",
     "react": "^18.2.0"
   },
@@ -33,6 +34,7 @@
     "@spinal-ckb/core": "workspace:*",
     "@tanstack/query-core": "^4.29.5",
     "jotai": "^2.1.0",
-    "jotai-tanstack-query": "^0.7.0"
+    "jotai-tanstack-query": "^0.7.0",
+    "lodash.throttle": "^4.1.1"
   }
 }
