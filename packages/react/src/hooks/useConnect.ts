@@ -7,18 +7,22 @@ import { WithMutationArgs, defaultArgs } from './args';
 import { useConfig } from 'src/context';
 
 interface UseConnectArgs {
-  connector: Connector;
+  connector?: Connector;
 }
 
 export function useConnect(
   args: WithMutationArgs<UseConnectArgs, Awaited<ReturnType<typeof core.connect>> | undefined>,
 ) {
-  const { connector, onSuccess, onError, onSettled } = args ?? defaultArgs;
+  const { onSuccess, onError, onSettled } = args ?? defaultArgs;
   const config = useConfig();
+  const connector = args?.connector ?? config?.connector;
   const connectMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
       mutationKey: ['connect'],
-      mutationFn: async ({ connector }: UseConnectArgs) => {
+      mutationFn: async ({ connector }: Pick<UseConnectArgs, 'connector'>) => {
+        if (!connector) {
+          throw new Error('No connector provided');
+        }
         const response = await core.connect({ connector });
         return response;
       },
@@ -35,8 +39,10 @@ export function useConnect(
   const connected = useMemo(() => !!address, [address]);
 
   useEffect(() => {
-    config?.addConnector(connector);
-    config?.onConnectDataChange(connector, setData);
+    if (connector) {
+      config?.addConnector(connector);
+      config?.onConnectDataChange(connector, setData);
+    }
   }, [config, connector]);
 
   const connect = useCallback(() => {

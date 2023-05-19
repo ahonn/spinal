@@ -17,9 +17,7 @@ export function SpinalConfigProvider(props: SpinalConfigProviderProps) {
 
   return (
     <JotaiProvider store={store}>
-      <SpinalConfigContext.Provider value={spinalConfig}>
-        {children}
-      </SpinalConfigContext.Provider>
+      <SpinalConfigContext.Provider value={spinalConfig}>{children}</SpinalConfigContext.Provider>
     </JotaiProvider>
   );
 }

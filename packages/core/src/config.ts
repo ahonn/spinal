@@ -7,9 +7,9 @@ import { Indexer, RPC, config as lumosConfig } from '@ckb-lumos/lumos';
 import { chainAtom } from './store/chain';
 
 export type CreateConfigParameters = {
-  autoConnect?: boolean;
-  connectors?: Connector[];
   chains: Chain[];
+  connectors: Connector[];
+  autoConnect?: boolean;
 };
 
 export class Config {
@@ -18,12 +18,11 @@ export class Config {
   private chains: Chain[];
   public autoConnect: boolean;
   public store: ReturnType<typeof createStore>;
-  public connectors: Connector[];
+  public connectors: Connector[] = [];
 
   constructor(params: CreateConfigParameters) {
     this.autoConnect = params.autoConnect ?? false;
     this.chains = params.chains;
-    this.connectors = params.connectors || [];
     this.store = createStore();
 
     const chain = this.store.get(chainAtom) ?? this.chains[0] ?? testnet;
@@ -35,6 +34,14 @@ export class Config {
     this.store.sub(chainAtom, () => {
       const chain = this.store.get(chainAtom);
       lumosConfig.initializeConfig(chain);
+    });
+
+    const { connectors = [] } = params;
+    connectors.forEach((connector, index) => {
+      this.addConnector(connector);
+      if (index === 0) {
+        this.setActiveConnector(connector);
+      }
     });
   }
 
