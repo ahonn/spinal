@@ -1,5 +1,5 @@
 import { BI, Transaction, commons, helpers } from '@ckb-lumos/lumos';
-import { ConnectorData, Connector } from './base';
+import { Connector, ConnectorData } from './base';
 import { Address, EIP1193Provider, Hex } from 'viem';
 import { getConfig } from 'src/config';
 import { bytes } from '@ckb-lumos/codec';
