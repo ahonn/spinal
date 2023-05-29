@@ -11,7 +11,7 @@ interface UseConnectArgs {
 }
 
 export function useConnect(
-  args: WithMutationArgs<UseConnectArgs, Awaited<ReturnType<typeof core.connect>> | undefined>,
+  args: WithMutationArgs<UseConnectArgs, Awaited<ReturnType<typeof core.connect>> | undefined> = {},
 ) {
   const { onSuccess, onError, onSettled } = args ?? defaultArgs;
   const config = useConfig();
