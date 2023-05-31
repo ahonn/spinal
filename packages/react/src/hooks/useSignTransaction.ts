@@ -1,20 +1,21 @@
 import { atomsWithMutation } from 'jotai-tanstack-query';
-import { helpers } from '@ckb-lumos/lumos';
 import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { WithMutationArgs, defaultArgs } from './args';
+import { Transaction } from '@ckb-lumos/base';
+import { helpers } from '@ckb-lumos/lumos';
 
-export interface UseSendTransactionArgs {
+export interface UseSignTransactionArgs {
   tx: helpers.TransactionSkeletonType;
 }
 
-export function useSendTransaction(args?: WithMutationArgs<UseSendTransactionArgs, string>) {
+export function useSignTransaction(args?: WithMutationArgs<UseSignTransactionArgs, string>) {
   const { tx, onSuccess, onError, onSettled } = args ?? defaultArgs;
-  const sendTransactionMutationAtom = useMemo(() => {
+  const signTransactionMutationAtom = useMemo(() => {
     const [, atom] = atomsWithMutation(() => ({
-      mutationKey: ['sendTransaction'],
-      mutationFn: async ({ tx }: UseSendTransactionArgs) => {
+      mutationKey: ['signTransaction'],
+      mutationFn: async ({ tx }: UseSignTransactionArgs) => {
         const txHash = await core.signTransaction(tx);
         return txHash;
       },
@@ -25,7 +26,7 @@ export function useSendTransaction(args?: WithMutationArgs<UseSendTransactionArg
     return atom;
   }, [onSuccess, onError, onSettled]);
 
-  const [{ data, error, isError, isLoading, isSuccess }, mutate] = useAtom(sendTransactionMutationAtom);
+  const [{ data, error, isError, isLoading, isSuccess }, mutate] = useAtom(signTransactionMutationAtom);
 
   const signTransaction = useCallback(async () => {
     await mutate([{ tx }]);
@@ -36,7 +37,7 @@ export function useSendTransaction(args?: WithMutationArgs<UseSendTransactionArg
     isError,
     isLoading,
     isSuccess,
-    data,
+    data: data as Transaction,
     signTransaction,
   };
 }
