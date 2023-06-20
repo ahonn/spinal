@@ -26,7 +26,7 @@ root.render(
 );
 ```
 
-```
+```typescript
 import { useConnect, useDisconnect, useCapacities } from '@spinal-ckb/react';
  
 function Profile() {
