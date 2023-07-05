@@ -2,10 +2,6 @@
 
 name: Releases
 
-env:
-  PLUGIN_NAME: logseq-plugin-todo
-
-# Controls when the action will run.
 on:
   # push:
   #   branches:
@@ -27,16 +23,19 @@ jobs:
         with:
           node-version: "18"
       - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install
-      - name: Build production bundle
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: build
+        run: npm install yarn -g
+      - name: Set version
+        run: yarn set version berry
+      - name: Yarn install
+        run: yarn install
+      - name: Build
+        run: yarn run build
       - name: Install zip
         uses: montudor/action-zip@v1
       - name: Release
-        run: npx semantic-release
+        run: yarn run release
         env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.YARN_NPM_AUTH_TOKEN }}
+          YARN_NPM_PUBLISH_REGISTRY: ${{ secrets.YARN_NPM_PUBLISH_REGISTRY }}
+          YARN_NPM_PUBLISH_ACCESS: ${{ secrets.YARN_NPM_PUBLISH_ACCESS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

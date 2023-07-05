@@ -9,13 +9,15 @@
   ],
   "scripts": {
     "dev": "nx run-many --target=dev",
-    "build": "nx run-many --target=build"
+    "build": "nx run-many --target=build",
+    "release": "semantic-release"
   },
   "keywords": [],
   "author": "Yuexun Jiang <yuexunjiang@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.1.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "eslint": "8.17.0",
@@ -31,11 +33,8 @@
     "nx-cloud": "latest",
     "prettier": "^2.8.8",
     "semantic-release": "^21.0.7",
-    "tsup": "^6.7.0",
+    "semantic-release-yarn": "^2.0.0",
     "typescript": "^5.0.4"
   },
-  "dependencies": {
-    "@semantic-release/git": "^10.0.1",
-    "semantic-release-yarn": "^2.0.0"
-  }
+  "packageManager": "yarn@3.6.1"
 }

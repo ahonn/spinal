@@ -18,8 +18,7 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es2021",
-    "types": ["node"]
+    "target": "es2021"
   },
   "exclude": ["node_modules/**", "dist/**"],
   "include": ["src/**/*", "tsup.config.ts"]

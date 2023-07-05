@@ -29,6 +29,8 @@
     "viem": "^0.3.22"
   },
   "devDependencies": {
+    "react": "^18.2.0",
+    "tsup": "^7.1.0",
     "typescript": "^5.0.4"
   }
 }
