@@ -6,7 +6,10 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["es2021", "dom"],
+    "lib": [
+      "es2021",
+      "dom"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
@@ -19,8 +22,16 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "es2021",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "exclude": ["node_modules/**", "dist/**"],
-  "include": ["src/**/*"]
+  "exclude": [
+    "node_modules/**",
+    "dist/**"
+  ],
+  "include": [
+    "src/**/*",
+    "tsup.config.ts"
+  ]
 }

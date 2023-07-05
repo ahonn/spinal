@@ -1,4 +1,4 @@
-import { config } from '@ckb-lumos/lumos';
+import { config } from "@ckb-lumos/lumos";
 
 export interface RpcUrl {
   rpc: string;

@@ -1,4 +1,4 @@
-import type { ConnectorData, Connector } from './connectors/base';
+import type { Connector, ConnectorData } from './connectors/base';
 import { createStore } from 'jotai';
 import { connectAtom, connectorAtom } from './store/connect';
 import { connect } from './actions';

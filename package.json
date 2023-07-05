@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
-    "build": "pnpm run build:core && pnpm run build:react",
-    "build:core": "cd ./packages/core && pnpm run build",
-    "build:react": "cd ./packages/react && pnpm run build",
-    "build:example": "pnpm run build && cd ./example && pnpm run build",
+    "build": "pnpm exec nx run-many --target=build",
     "lint": "eslint . --cache",
     "publish": "pnpm run build && pnpm publish --access=public -r"
   },
@@ -28,13 +25,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^5.9.1",
     "prettier": "^2.8.8",
-    "typescript": "^5.0.4"
-  },
-  "dependencies": {
-    "@ckb-lumos/base": "^0.19.0",
-    "@ckb-lumos/codec": "^0.19.0",
-    "@ckb-lumos/lumos": "^0.19.0",
+    "typescript": "^5.0.4",
     "@types/node": "^20.1.1",
-    "tsup": "^6.7.0"
+    "tsup": "^6.7.0",
+    "nx": "16.4.3",
+    "nx-cloud": "latest"
   }
 }

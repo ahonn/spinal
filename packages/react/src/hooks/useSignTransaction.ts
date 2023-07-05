@@ -3,11 +3,11 @@ import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import { WithMutationArgs, defaultArgs } from './args';
-import { Transaction } from '@ckb-lumos/base';
-import { helpers } from '@ckb-lumos/lumos';
+import type { Transaction } from '@ckb-lumos/base';
+import type { TransactionSkeletonType } from '@ckb-lumos/helpers';
 
 export interface UseSignTransactionArgs {
-  tx: helpers.TransactionSkeletonType;
+  tx: TransactionSkeletonType;
 }
 
 export function useSignTransaction(args?: WithMutationArgs<UseSignTransactionArgs, string>) {

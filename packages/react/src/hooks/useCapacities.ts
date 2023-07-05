@@ -1,4 +1,4 @@
-import { BI } from '@ckb-lumos/lumos';
+import { BI } from '@ckb-lumos/bi';
 import * as core from '@spinal-ckb/core';
 import { useAtom } from 'jotai';
 import { atomsWithMutation } from 'jotai-tanstack-query';
